@@ -9,6 +9,7 @@ class Drawer:
     def __init__(self, screensize):
         #윈도우 노출 코드
         self.window=tkinter.Tk()
+        self.screensize = screensize
 
         self.window.title("HELLO")
         self.window.geometry(str(screensize[0]) + "x" + str(screensize[1]) + "+100+100")
@@ -17,41 +18,30 @@ class Drawer:
         #캔버스 정의
         self.canvas = tkinter.Canvas(self.window, width=screensize[0], height=screensize[1], bd=2)
 
-    def DrawCircle(self, center, radius):
-        self.canvas.create_oval(center[0] - radius/2, center[1] - radius/2,  center[0] + radius/2, center[1] + radius/2, fill='red')
+    #원 그리기
+    def DrawCircle(self, center, radius, color):
+        self.canvas.create_oval(center[0] - radius/2, center[1] - radius/2,  center[0] + radius/2, center[1] + radius/2, fill=color)
         self.canvas.pack()
 
+    def DrawRectangle(self, start, end, color):
+        self.canvas.create_rectangle(start[0], start[1], end[0], end[1], fill=color)
+        self.canvas.pack()
+
+    #창 띄우기(정적)
     def windowShow(self):
         self.window.mainloop()
 
+    #캔버스 초기화
     def canvasClear(self):
         self.canvas.delete("all")
 
+    #창 새로고침
     def windowUpdate(self):
         self.window.update()
         self.window.update_idletasks()
 
-
-dr = Drawer(np.array([640, 480]))        
-
-dt = 0
-
-startPosition = 0
-while 1:
-    #프레임 체크를 위한 시작 시간
-    startTime = time.time()
-    #화면 초기화
-    dr.canvasClear()
-
-    ##메인 프로그램 작성
-    startPosition += dt * 20
-
-    dr.DrawCircle(np.array([startPosition, 231]), 19)
-    dr.window.title(str(dt))
-
-    dr.windowUpdate()
+    #화면 좌표로 변환
+    #def convertPos(self, position, originPos, onemeterpx):
+        
 
 
-    #프레임 체크를 위한 루프의 마지막 시간
-    endTime = time.time()
-    dt = endTime - startTime
