@@ -24,7 +24,8 @@ entitys = [Entity(np.array([3, 2]), 0.2, np.array([600, 90])),
            Entity(np.array([330, 50]), 0.2, np.array([600, 90])), 
            Entity(np.array([320, 20]), 0.2, np.array([600, 90])), 
            Entity(np.array([30, 90]), 0.2, np.array([600, 90]))]
- 
+
+
 
 while(True):
 
