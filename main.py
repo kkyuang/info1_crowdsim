@@ -23,6 +23,8 @@ for i in e2:
 Entities = e1 + e2
 map = Map(np.array([64, 48]))
 
+map.makeWall(np.array([30, 30]), np.array([40, 40]))
+
 dr = Drawer(np.array([640, 480]))        
 
 dt = 0.1
@@ -36,6 +38,8 @@ while 1:
 
     ##메인 프로그램 작성
 
+    dr.DrawRectangle(np.array([300, 300]), np.array([400, 400]), 'black')
+
     #엔티티 그리기
     for i in range(len(Entities)):
         ##맵 새로고침
@@ -44,11 +48,10 @@ while 1:
         Entities[i].move(dt, map)
 
         ##맵 새로고침
+        #print(Entities[i].position)
         map.grid[math.floor(Entities[i].position[0])][math.floor(Entities[i].position[1])] = Entities[i]
         
-        dr.DrawCircle(Entities[i].position * 10, Entities[i].size * 100, Entities[i].color)
-
-    dr.DrawRectangle(np.array([19, 29]), np.array([299, 49]), 'black')
+        dr.DrawCircle(Entities[i].position * 10, Entities[i].size * 10, Entities[i].color)
 
     #dr.window.title(str(1/dt))
 
