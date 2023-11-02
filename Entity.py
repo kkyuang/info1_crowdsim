@@ -3,14 +3,18 @@ import random
 import math
 
 def norm(a, b):
+    #유클리드 거리
     return math.sqrt((a[0] - b[0])**2 + (a[1] - b[1])**2)
+
+    #택시 거리
+    #return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 class Entity:
     def __init__(self, position, size):
         self.position = position.copy()
         self.size = size
 
-        self.speed = 4
+        self.speed = 10
         self.destination = self.randomDestination(np.array([0, 0]), np.array([64, 48]))
 
         self.state = 'normal'
@@ -178,7 +182,9 @@ class Entity:
             velocity = direction * self.speed
 
         #목적지 방향으로 미소거리 더하기
-        self.position = self.position + velocity * dt
+        newposition = self.position + velocity * dt
+        if map.grid[math.floor(newposition[0])][math.floor(newposition[1])] == 0:
+            self.position = newposition
         
 
 

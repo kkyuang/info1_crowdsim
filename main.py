@@ -7,7 +7,7 @@ import numpy as np
 import math
 
 
-n = 20
+n = 200
 
 e1 = [Entity(position=np.array([random.randrange(0, 20), random.randrange(0, 48)]), size=0.2) for i in range(n)]
 for i in e1:
@@ -19,11 +19,14 @@ e2 = [Entity(position=np.array([random.randrange(44, 64), random.randrange(0, 48
 for i in e2:
     i.setDestRange(np.array([0, 0]), np.array([20, 48]))
     i.destination = i.randomDestination(i.rangestart, i.rangeend)
+    i.normalColor = 'purple'
 
 Entities = e1 + e2
-map = Map(np.array([64, 48]))
+map = Map(np.array([640, 480]))
 
-map.makeWall(np.array([30, 30]), np.array([40, 40]))
+map.makeWall(np.array([20, 20]), np.array([35, 23]))
+map.makeWall(np.array([20, 32]), np.array([35, 35]))
+
 
 dr = Drawer(np.array([640, 480]))        
 
@@ -38,12 +41,14 @@ while 1:
 
     ##메인 프로그램 작성
 
-    dr.DrawRectangle(np.array([300, 300]), np.array([400, 400]), 'black')
+    for i in range(len(map.walls)):
+        dr.DrawRectangle(map.walls[i].start * 10, map.walls[i].end * 10, 'black')
 
     #엔티티 그리기
     for i in range(len(Entities)):
         ##맵 새로고침
-        map.grid[math.floor(Entities[i].position[0])][math.floor(Entities[i].position[1])] = 0
+        if map.grid[math.floor(Entities[i].position[0])][math.floor(Entities[i].position[1])] != 1:
+            map.grid[math.floor(Entities[i].position[0])][math.floor(Entities[i].position[1])] = 0
 
         Entities[i].move(dt, map)
 
@@ -51,7 +56,7 @@ while 1:
         #print(Entities[i].position)
         map.grid[math.floor(Entities[i].position[0])][math.floor(Entities[i].position[1])] = Entities[i]
         
-        dr.DrawCircle(Entities[i].position * 10, Entities[i].size * 10, Entities[i].color)
+        dr.DrawCircle(Entities[i].position * 10, Entities[i].size * 40, Entities[i].color)
 
     #dr.window.title(str(1/dt))
 
