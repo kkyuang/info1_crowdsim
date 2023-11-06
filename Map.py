@@ -65,6 +65,7 @@ class Map:
         #구역 나누기
         for i in range(len(vertical_lines) - 1):
             for j in range(len(horizontal_lines) - 1):
+                #현재 구역의 ID
                 start = np.array([vertical_lines[i], horizontal_lines[j]])
                 end = np.array([vertical_lines[i + 1], horizontal_lines[j + 1]])
                 
@@ -72,6 +73,33 @@ class Map:
                 if self.grid[start[0]][start[1]] != 1:
                     reg = Reigon(start, end)
                     self.reigons[reg.id] = reg
+        
+        #구역 연결하기
+        for i in range(1, len(vertical_lines) - 2):
+            for j in range(1, len(horizontal_lines) - 2):
+
+                directionx = [-1, 0, 1, -1, 1, -1, 0, 1]
+                directiony = [1, 1, 1, 0, 0, -1, -1, -1]
+                
+                #현재 구역의 ID
+                start = np.array([vertical_lines[i], horizontal_lines[j]])
+                end = np.array([vertical_lines[i + 1], horizontal_lines[j + 1]])
+
+                #구역 내가 장애물이면 구역 추가에서 제외
+                if self.grid[start[0]][start[1]] != 1:
+                    for k in range(8):
+                
+                            #연결할 구역의 ID
+                            start1 = np.array([vertical_lines[i + directionx[k]], horizontal_lines[j + directiony[k]]])
+                            end1 = np.array([vertical_lines[i + directionx[k]], horizontal_lines[j + directiony[k]]])
+
+                            #연결할 구역이 장애물이 아니여야 함
+                            if self.grid[start1[0]][start1[1]] != 1:
+                                reg = Reigon(start, end)
+                                reg1 = Reigon(start1, end1)
+                                
+                                self.reigons[reg.id].linkeds.append(reg1.id)
+                                
 
                  
                 

@@ -32,7 +32,7 @@ map.makeWall(np.array([25, 32]), np.array([28, 48]))
 map.makeregion()
 
 
-dr = Drawer(np.array([640, 480]))        
+dr = Drawer(np.array([640, 480]))    
 
 dt = 0.1
 

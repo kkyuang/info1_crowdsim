@@ -62,88 +62,23 @@ class Entity:
                 cost[2] = -1 #우상
 
 
-            #좌상 탐색
-            if cost[0] != -1:
-                if map.grid[math.floor(self.position[0]) - 1][math.floor(self.position[1]) + 1] == 0:
-                    #비용 계산
-                    g = 1.4
-                    search = np.array([math.floor(self.position[0]) - 1 + 0.5, math.floor(self.position[1]) + 1 + 0.5])
-                    h = norm(search, self.destination)
-                    cost[0] = g + h
-                else:
-                    cost[0] = -1
+            directionx = [-1, 0, 1, -1, 1, -1, 0, 1]
+            directiony = [1, 1, 1, 0, 0, -1, -1, -1]
 
-            #상 탐색
-            if cost[1] != -1:
-                if map.grid[math.floor(self.position[0])][math.floor(self.position[1]) + 1] == 0:
-                    #비용 계산
-                    g = 1
-                    search = np.array([math.floor(self.position[0]) + 0.5, math.floor(self.position[1]) + 1 + 0.5])
-                    h = norm(search, self.destination)
-                    cost[1] = g + h
-                else:
-                    cost[1] = -1
+            for k in range(8):
+                if cost[k] != -1:
+                    if map.grid[math.floor(self.position[0]) + directionx[k]][math.floor(self.position[1]) + directiony[k]] == 0:
+                        #비용 계산
+                        if directionx[k]*directiony[k] == 0:
+                            g = 1
+                        else:
+                            g = 1.4
 
-            #우상 탐색
-            if cost[2] != -1:
-                if map.grid[math.floor(self.position[0]) + 1][math.floor(self.position[1]) + 1] == 0:
-                    #비용 계산
-                    g = 1
-                    h = norm(np.array([math.floor(self.position[0]) + 1 + 0.5, math.floor(self.position[1]) + 1 + 0.5]), self.destination)
-                    cost[2] = g + h
-                else:
-                    cost[2] = -1
-
-            #좌 탐색
-            if cost[3] != -1:
-                if map.grid[math.floor(self.position[0]) - 1][math.floor(self.position[1])] == 0:
-                    #비용 계산
-                    g = 1
-                    h = norm(np.array([math.floor(self.position[0]) - 1 + 0.5, math.floor(self.position[1]) + 0.5]), self.destination)
-                    cost[3] = g + h
-                else:
-                    cost[3] = -1
-
-            #우 탐색
-            if cost[4] != -1:
-                if map.grid[math.floor(self.position[0]) + 1][math.floor(self.position[1])] == 0:
-                    #비용 계산
-                    g = 1
-                    h = norm(np.array([math.floor(self.position[0]) + 1 + 0.5, math.floor(self.position[1]) + 0.5]), self.destination)
-                    cost[4] = g + h
-                else:
-                    cost[4] = -1
-
-            #좌하 탐색
-            if cost[5] != -1:
-                if map.grid[math.floor(self.position[0]) - 1][math.floor(self.position[1]) - 1] == 0:
-                    #비용 계산
-                    g = 1
-                    h = norm(np.array([math.floor(self.position[0]) - 1 + 0.5, math.floor(self.position[1]) - 1 + 0.5]), self.destination)
-                    cost[5] = g + h
-                else:
-                    cost[5] = -1
-
-            #하 탐색
-            if cost[6] != -1:
-                if map.grid[math.floor(self.position[0])][math.floor(self.position[1]) - 1] == 0:
-                    #비용 계산
-                    g = 1
-                    h = norm(np.array([math.floor(self.position[0]) + 0.5, math.floor(self.position[1]) - 1 + 0.5]), self.destination)
-                    cost[6] = g + h
-                else:
-                    cost[6] = -1
-
-            #우하 탐색
-            if cost[7] != -1:
-                if map.grid[math.floor(self.position[0]) + 1][math.floor(self.position[1]) - 1] == 0:
-                    #비용 계산
-                    g = 1
-                    h = norm(np.array([math.floor(self.position[0]) + 1 + 0.5, math.floor(self.position[1]) - 1 + 0.5]), self.destination)
-                    cost[7] = g + h
-                else:
-                    cost[7] = -1
-
+                        search = np.array([math.floor(self.position[0]) + directionx[k] + 0.5, math.floor(self.position[1])  + directiony[k] + 0.5])
+                        h = norm(search, self.destination)
+                        cost[k] = g + h
+                    else:
+                        cost[k] = -1
 
             direction = np.array([0, 0])
 
