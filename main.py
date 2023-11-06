@@ -21,7 +21,7 @@ map.makeregion()
 
 #엔티티 생성
 
-n = 20
+n = 2
 
 
 e1 = [Entity(position=np.array([random.randrange(0, 20), random.randrange(0, 48)]), size=0.2, map=map) for i in range(n)]
@@ -55,8 +55,9 @@ while 1:
     for i in range(len(map.walls)):
         dr.DrawRectangle(map.walls[i].start * 10, map.walls[i].end * 10, 'black')
     
+    print(map.reigons.keys())
     for i in map.reigons.keys():
-        dr.DrawRectangle(map.reigons[i].start * 10, map.reigons[i].end * 10, 'gray')
+        dr.DrawRectangle2(map.reigons[i].start * 10, map.reigons[i].end * 10, 'red')
 
     #엔티티 그리기
     for i in range(len(Entities)):
