@@ -44,19 +44,19 @@ class Entity:
         
 
             #경계 충돌 판정
-            if math.floor(self.position[0]) <= 0: #좌측에 경계 존재
+            if math.floor(self.position[0]) <= 1: #좌측에 경계 존재
                 cost[0] = -1 #좌상
                 cost[3] = -1 #좌
                 cost[5] = -1 #좌하
-            if math.floor(self.position[0]) >= map.size[0] - 1: #우측에 경계 존재
+            if math.floor(self.position[0]) >= map.size[0] - 2: #우측에 경계 존재
                 cost[2] = -1 #우상
                 cost[4] = -1 #우
                 cost[7] = -1 #우하
-            if math.floor(self.position[1]) <= 0: #하단에 경계 존재
+            if math.floor(self.position[1]) <= 1: #하단에 경계 존재
                 cost[5] = -1 #좌하
                 cost[6] = -1 #하
                 cost[7] = -1 #우하
-            if math.floor(self.position[1]) >= map.size[1] - 1: #상단에 경계 존재
+            if math.floor(self.position[1]) >= map.size[1] - 2: #상단에 경계 존재
                 cost[0] = -1 #좌상
                 cost[1] = -1 #상
                 cost[2] = -1 #우상

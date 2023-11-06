@@ -22,10 +22,14 @@ for i in e2:
     i.normalColor = 'purple'
 
 Entities = e1 + e2
-map = Map(np.array([640, 480]))
+map = Map(np.array([700, 500]))
 
+map.makeWall(np.array([25, 0]), np.array([28, 20]))
 map.makeWall(np.array([20, 20]), np.array([35, 23]))
 map.makeWall(np.array([20, 32]), np.array([35, 35]))
+map.makeWall(np.array([25, 32]), np.array([28, 48]))
+
+map.makeregion()
 
 
 dr = Drawer(np.array([640, 480]))        
