@@ -58,61 +58,60 @@ class Entity:
 
         ##일반적 배회 상태 알고리즘
         if self.state == 'normal':
-            #목적지 정하기 -> 최종 목적지를 향한 다음 구역 탐색 A* 알고리즘
-            #처음 실행시 -> 현재 구역의 id 얻기 및 목적지의 id 얻기
-            if self.nowReigon == 0:
+
+            #현재 위치한 구역
+            def getReigon(position):
                 myReigonStart = np.array([0, 0])
                 myReigonEnd = np.array([0, 0])
+                for i in range(len(map.vertical_lines)-1):
+                    if map.vertical_lines[i] <= position[0] and position[0] < map.vertical_lines[i + 1]:
+                        myReigonStart[0] = map.vertical_lines[i]
+                        myReigonEnd[0] = map.vertical_lines[i+1]
 
-                #현재 위치한 구역
-                def getReigon(position):
-                    for i in range(len(map.vertical_lines)-1):
-                        if map.vertical_lines[i] <= position[0] and position[0] < map.vertical_lines[i + 1]:
-                            myReigonStart[0] = map.vertical_lines[i]
-                            myReigonEnd[0] = map.vertical_lines[i+1]
+                for i in range(len(map.horizontal_lines)-1):
+                    if map.horizontal_lines[i] <= position[1] and position[1] < map.horizontal_lines[i + 1]:
+                        myReigonStart[1] = map.horizontal_lines[i]
+                        myReigonEnd[1] = map.horizontal_lines[i+1]
 
-                    for i in range(len(map.horizontal_lines)-1):
-                        if map.horizontal_lines[i] <= position[1] and position[1] < map.horizontal_lines[i + 1]:
-                            myReigonStart[1] = map.horizontal_lines[i]
-                            myReigonEnd[1] = map.horizontal_lines[i+1]
-
-                    return map.getReigonID(myReigonStart, myReigonEnd)
-                  
+                return map.getReigonID(myReigonStart, myReigonEnd)
+            
+            #목적지 정하기 -> 최종 목적지를 향한 다음 구역 탐색 A* 알고리즘
+            #처음 실행시 -> 현재 구역의 id 얻기 및 목적지의 id 얻기
+            if self.nowReigon != getReigon(self.position):
                 self.nowReigon = getReigon(self.position)
                 self.destReigon = getReigon(self.destination)
-
             
-            #목적지와 같은 구역에 속해 있지 않을 때 임시 목표를 정함
-            if self.nowReigon == self.destReigon:
-                self.tempDestination = self.destination
-            else:
-                #구역 범위에서 A* 알고리즘 적용
-                #현재 구역에서 연결된 구역으로
-                costs = [0 for i in range(len(map.reigons[self.nowReigon].linkeds))]
-                k = 0
-                for i in map.reigons[self.nowReigon].linkeds:
-                    #현재와의 거리
-                    g = norm(self.position, np.array([i[0], i[1]]))
-                    #목적지까지의 거리
-                    h = norm(self.destination, np.array([i[0], i[1]]))
+                #목적지와 같은 구역에 속해 있지 않을 때 임시 목표를 정함
+                if self.nowReigon == self.destReigon:
+                    self.tempDestination = self.destination
 
-                    costs[k]
-                    k+=1
-                
-                #최솟값 구하기
-                minV = 0
-                for i in range(len(costs)):
-                    if costs[i] < costs[minV]:
-                        minV = i
+                else:
+                    #구역 범위에서 A* 알고리즘 적용
+                    #현재 구역에서 연결된 구역으로
+                    costs = [0 for i in range(len(map.reigons[self.nowReigon].linkeds))]
+                    k = 0
+                    for i in map.reigons[self.nowReigon].linkeds:
+                        #현재와의 거리
+                        g = norm(self.position, np.array([i[0], i[1]]))
+                        #목적지까지의 거리
+                        h = norm(self.destination, np.array([i[0], i[1]]))
 
-                print(map.reigons[self.nowReigon].linkeds)
+                        costs[k] = g + k
+                        k+=1
                     
-                #구역 및 임시 목적지 변경하기
-                if len(costs) > 0:
-                    print('hello')
-                    self.nowReigon = map.reigons[self.nowReigon].linkeds[minV]
-                    self.tempDestination = self.randomDestination(map.reigons[self.nowReigon].start, map.reigons[self.nowReigon].end, map)
+                    #최솟값 구하기
+                    minV = 0
+                    for i in range(len(costs)):
+                        if costs[i] < costs[minV]:
+                            minV = i
+                        
+                    #구역 및 임시 목적지 변경하기
+                    if len(costs) > 0:
+                        self.nowReigon = map.reigons[self.nowReigon].linkeds[minV]
+                        self.tempDestination = self.randomDestination(map.reigons[self.nowReigon].start, map.reigons[self.nowReigon].end, map)
+                    
                 
+
                 
 
 
@@ -190,6 +189,9 @@ class Entity:
             #목적지 접근 시 목적지 변경
             if np.linalg.norm(self.destination - self.position) < self.speed:
                 self.destination = self.randomDestination(self.rangestart, self.rangeend, map)
+                self.destReigon = 0
+                self.nowReigon = 0
+
 
             #벡터 졍규화
             if np.linalg.norm(direction) != 0:
@@ -201,6 +203,7 @@ class Entity:
         newposition = self.position + velocity * dt
         if map.grid[math.floor(newposition[0])][math.floor(newposition[1])] == 0:
             self.position = newposition
+
         
 
 

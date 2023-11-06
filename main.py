@@ -14,13 +14,14 @@ map.makeWall(np.array([25, 0]), np.array([28, 20]))
 map.makeWall(np.array([20, 20]), np.array([35, 23]))
 map.makeWall(np.array([20, 32]), np.array([35, 35]))
 map.makeWall(np.array([25, 32]), np.array([28, 48]))
+map.makeWall(np.array([0, 45]), np.array([64, 46]))
 
 map.makeregion()
 
 
 #엔티티 생성
 
-n = 200
+n = 20
 
 
 e1 = [Entity(position=np.array([random.randrange(0, 20), random.randrange(0, 48)]), size=0.2, map=map) for i in range(n)]
@@ -53,6 +54,9 @@ while 1:
 
     for i in range(len(map.walls)):
         dr.DrawRectangle(map.walls[i].start * 10, map.walls[i].end * 10, 'black')
+    
+    for i in map.reigons.keys():
+        dr.DrawRectangle(map.reigons[i].start * 10, map.reigons[i].end * 10, 'gray')
 
     #엔티티 그리기
     for i in range(len(Entities)):

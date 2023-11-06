@@ -79,7 +79,7 @@ class Map:
                 end = np.array([vertical_lines[i + 1], horizontal_lines[j + 1]])
                 
                 #구역 내가 장애물이면 구역 추가에서 제외
-                if self.grid[start[0]][start[1]] != 1:
+                if self.grid[math.floor((start[0] + end[0]) / 2)][math.floor((start[1] + end[1]) / 2)] != 1:
                     reg = Reigon(start, end)
                     self.reigons[reg.id] = reg
         
@@ -94,6 +94,8 @@ class Map:
                 start = np.array([vertical_lines[i], horizontal_lines[j]])
                 end = np.array([vertical_lines[i + 1], horizontal_lines[j + 1]])
 
+                reg = Reigon(start, end)
+
                 #구역 내가 장애물이면 구역 추가에서 제외
                 if self.grid[start[0]][start[1]] != 1:
                     for k in range(8):
@@ -106,22 +108,16 @@ class Map:
                         #연결할 구역의 ID
                         start1 = np.array([vertical_lines[i + directionx[k]], horizontal_lines[j + directiony[k]]])
                         end1 = np.array([vertical_lines[i + 2*directionx[k]], horizontal_lines[j + 2*directiony[k]]])
-                        print(start1)
                         #연결할 구역이 장애물이 아니여야 함
-                        if self.grid[math.floor((start1[0] + end1[0]) / 2)][math.floor((start1[1] + end1[1]) / 2)] != 1 and self.reigons in self.getReigonID(start1, end1):
-                            reg = Reigon(start, end)
-                            
+                        if self.grid[math.floor((start1[0] + end1[0]) / 2)][math.floor((start1[1] + end1[1]) / 2)] != 1 and self.getReigonID(start1, end1) in self.reigons :
                             if start[0] < end[0]:
                                 reg1 = Reigon(start1, end1)
                             else:
                                 reg1 = Reigon(end1, start1)
 
-
+                            
                             self.reigons[reg.id].linkeds.append(reg1.id)
-                
 
-                
-                print(reg.id)
                                 
 
                  
