@@ -6,22 +6,8 @@ import time
 import numpy as np
 import math
 
+#맵 생성
 
-n = 200
-
-e1 = [Entity(position=np.array([random.randrange(0, 20), random.randrange(0, 48)]), size=0.2) for i in range(n)]
-for i in e1:
-    i.setDestRange(np.array([44, 0]), np.array([64, 48]))
-    i.destination = i.randomDestination(i.rangestart, i.rangeend)
-    i.normalColor = 'blue'
-
-e2 = [Entity(position=np.array([random.randrange(44, 64), random.randrange(0, 48)]), size=0.2) for i in range(n)]
-for i in e2:
-    i.setDestRange(np.array([0, 0]), np.array([20, 48]))
-    i.destination = i.randomDestination(i.rangestart, i.rangeend)
-    i.normalColor = 'purple'
-
-Entities = e1 + e2
 map = Map(np.array([700, 500]))
 
 map.makeWall(np.array([25, 0]), np.array([28, 20]))
@@ -30,6 +16,26 @@ map.makeWall(np.array([20, 32]), np.array([35, 35]))
 map.makeWall(np.array([25, 32]), np.array([28, 48]))
 
 map.makeregion()
+
+
+#엔티티 생성
+
+n = 200
+
+
+e1 = [Entity(position=np.array([random.randrange(0, 20), random.randrange(0, 48)]), size=0.2, map=map) for i in range(n)]
+for i in e1:
+    i.setDestRange(np.array([44, 0]), np.array([64, 48]))
+    i.destination = i.randomDestination(i.rangestart, i.rangeend, map)
+    i.normalColor = 'blue'
+
+e2 = [Entity(position=np.array([random.randrange(44, 64), random.randrange(0, 48)]), size=0.2, map=map) for i in range(n)]
+for i in e2:
+    i.setDestRange(np.array([0, 0]), np.array([20, 48]))
+    i.destination = i.randomDestination(i.rangestart, i.rangeend, map)
+    i.normalColor = 'purple'
+
+Entities = e1 + e2
 
 
 dr = Drawer(np.array([640, 480]))    
