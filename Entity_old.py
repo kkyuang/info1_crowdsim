@@ -65,6 +65,75 @@ class Entity:
         ##일반적 배회 상태 알고리즘
         if self.state == 'normal':
 
+            #현재 위치한 구역
+            def getReigon(position):
+                myReigonStart = np.array([0, 0])
+                myReigonEnd = np.array([0, 0])
+                for i in range(len(map.vertical_lines)-1):
+                    if map.vertical_lines[i] <= position[0] and position[0] < map.vertical_lines[i + 1]:
+                        myReigonStart[0] = map.vertical_lines[i]
+                        myReigonEnd[0] = map.vertical_lines[i+1]
+
+                for i in range(len(map.horizontal_lines)-1):
+                    if map.horizontal_lines[i] <= position[1] and position[1] < map.horizontal_lines[i + 1]:
+                        myReigonStart[1] = map.horizontal_lines[i]
+                        myReigonEnd[1] = map.horizontal_lines[i+1]
+
+                return map.getReigonID(myReigonStart, myReigonEnd)
+            
+            #목적지 정하기 -> 최종 목적지를 향한 다음 구역 탐색 A* 알고리즘
+            #처음 실행시 -> 현재 구역의 id 얻기 및 목적지의 id 얻기
+            #print(self.nowReigon == getReigon(self.position))
+            #self.nowReigon == getReigon(self.position) or 
+            if self.nowReigon == getReigon(self.position) or self.nowReigon == 0:
+                self.nowReigon = getReigon(self.position)
+                self.destReigon = getReigon(self.destination)
+                print('reach')
+            
+                #목적지와 같은 구역에 속해 있지 않을 때 임시 목표를 정함
+                if self.nowReigon == self.destReigon:
+                    self.tempDestination = self.destination
+                else:
+                    #구역 범위에서 A* 알고리즘 적용
+                    #현재 구역에서 연결된 구역으로
+                    costs = [0 for i in range(len(map.reigons[self.nowReigon].linkeds))]
+                    k = 0
+                    for i in map.reigons[self.nowReigon].linkeds:
+                        #현재와의 거리
+                        g = norm(self.startedPos, np.array([i[0], i[1]]))
+                        #목적지까지의 거리
+                        h = norm(self.destination, np.array([i[0], i[1]]))
+
+                        costs[k] = g + k + (self.visitedRegions[i] if i in self.visitedRegions.keys() else 0)
+                        k+=1
+                    
+                    #최솟값 구하기
+                    minV = 0
+                    for i in range(len(costs)):
+                        if costs[i] < costs[minV]:
+                            minV = i
+                        
+                    #구역 및 임시 목적지 변경하기
+                    if len(costs) > 0:
+                        self.nowReigon = map.reigons[self.nowReigon].linkeds[minV]
+                        for i in self.visitedRegions.keys():
+                            self.visitedRegions[i] *= 0.5
+                        if self.nowReigon in self.visitedRegions.keys():
+                            self.visitedRegions[self.nowReigon] += 1000
+                        else:
+                            self.visitedRegions[self.nowReigon] = 1000
+                        #구역 내에서 랜덤하게
+                        self.tempDestination = self.randomDestination(map.reigons[self.nowReigon].start, map.reigons[self.nowReigon].end, map)
+                        #self.tempDestination = np.array([self.nowReigon[0], self.nowReigon[1]])
+                    
+
+
+                
+
+
+
+
+            #A* 알고리즘 사용하기
             #탐색 지점이 빈 공간일 때만 cost함수를 계산, 장애물이 존재할 때는 -1으로 한다.
             #탐색범위 순서: 좌상0, 상1, 우상2, 좌3, 우4, 좌하5, 하6, 우하7
             cost = [0 for i in range(8)]

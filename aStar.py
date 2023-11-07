@@ -2,6 +2,7 @@ import math
 import numpy as np
 from Map import Map 
 from Map import Reigon
+import random
 
 #A* 알고리즘
 #입력: 맵, 현재 위치, 목적지
@@ -31,8 +32,8 @@ class aStar:
     
     #구역 간 거리 매기기
     def distReigon(self, start, end):
-        dest = (start[0] - end[0])**2 + (start[1] - end[1]) ** 2
-        return math.sqrt(dest)
+        dest = abs(start[0] - end[0]) + abs(start[1] - end[1])
+        return dest
 
     #길찾기 함수
     def findRoute(self, startpos, destination):
@@ -42,6 +43,9 @@ class aStar:
 
         #닫힌 노드
         closed = [startRegion]
+        closed_motherNode = {}
+        distances = {}
+        distances[startRegion] = 0
 
         #저장된 경로에 존재할 경우
         if (startRegion, destReigon) in self.routes:
@@ -51,38 +55,70 @@ class aStar:
 
             #탐색중인 노드
             searching = self.map.reigons[startRegion].linkeds
-            print(destReigon)
+            for i in searching:
+                closed_motherNode[i] = startRegion
+                distances[i] = self.distReigon(startRegion, i)
 
+            exNode = startRegion
             #목표 노드가 나올 때까지 반복
             while True:
                 #연결된 노드들의 cost 함수 매기기
                 costs = [float("inf") for i in range(len(searching))]
                 for i in range(len(searching)):
                     if not (searching[i] in closed):
-                        g = self.distReigon(startRegion, searching[i])
+                        distances[searching[i]] = distances[exNode] + self.distReigon(exNode, searching[i])
+                        g = distances[searching[i]]
                         h = self.distReigon(searching[i], destReigon)
                         costs[i] = g + h
 
                 #최소 노드 확인 후 closed에 추가 및 탐색중인 노드 범위 넓히기
-                minV = costs.index(min(costs))
+                minV = -1
+                for i in range(len(searching)):
+                    if minV == -1:
+                        if not (searching[i] in closed):
+                            minV = i
+                    if costs[i] < costs[minV] and not (searching[i] in closed):
+                        minV = i
+
+                #탐색 범위가 모두 닫힌 노드뿐임
+                if minV == -1:
+                    return (startpos, destination)
+                        
                 closed.append(searching[minV])
                 searching += self.map.reigons[searching[minV]].linkeds
+                closed_motherNode[searching[minV]] = exNode
+                exNode = searching[minV]
 
                 #만약 새로 추가된 최소노드가 목표 노드라면?
                 if searching[minV] == destReigon:
+                    print(destReigon)
                     break
 
             #목표 노드의 부모 노드 찾아 나가기
             sequence = [destReigon]
             while True: #시작 노드가 나올 때까지 반복
-                nowLinks = self.map.reigons[searching[minV]].linkeds
-                for i in nowLinks:
-                    if i in closed:
-                        sequence.append(i)
+                sequence.append(closed_motherNode[sequence[len(sequence) - 1]])
+                print(sequence[len(sequence) - 1])
                 
                 if sequence[len(sequence) - 1] == startRegion:
                     break
 
+            sequence.reverse()
             return sequence
+        
+    #구역 내 임의 목표 목록으로 변환하는 함수
+    def routeToRandom(self, map:Map, sequence):
+        randomSeq = []
+        for i in sequence:
+            randomSeq += self.randomDestination(map.reigons[i].start, map.reigons[i].end, map)
+        
+        return randomSeq
+
+    #범위 내에서 랜덤인 목적지를 설정
+    def randomDestination(self, rangestart, rangeend, map):
+        while True:
+            dest = np.array([random.uniform(rangestart[0], rangeend[0]), random.uniform(rangestart[1], rangeend[1])])
+            if map.grid[math.floor(dest[0])][math.floor(dest[1])] == 0:
+                return dest
                 
             

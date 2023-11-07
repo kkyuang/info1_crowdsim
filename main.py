@@ -25,13 +25,13 @@ map.makeregion()
 n = 1
 
 
-e1 = [Entity(position=np.array([random.randrange(0, 20), random.randrange(0, 40)]), size=0.2, map=map) for i in range(n)]
+e1 = [Entity(position=np.array([random.uniform(0, 20), random.uniform(0, 40)]), size=0.2, map=map) for i in range(n)]
 for i in e1:
     i.setDestRange(np.array([44, 0]), np.array([64, 40]))
     i.destination = i.randomDestination(i.rangestart, i.rangeend, map)
     i.normalColor = 'blue'
 
-e2 = [Entity(position=np.array([random.randrange(44, 64), random.randrange(0, 40)]), size=0.2, map=map) for i in range(n)]
+e2 = [Entity(position=np.array([random.uniform(44, 64), random.uniform(0, 40)]), size=0.2, map=map) for i in range(n)]
 for i in e2:
     i.setDestRange(np.array([0, 0]), np.array([20, 40]))
     i.destination = i.randomDestination(i.rangestart, i.rangeend, map)
@@ -49,7 +49,35 @@ startPosition = 0
 #aStar 탐색을 위한 클래스 객체
 astar = aStar(map)
 
-print(astar.findRoute(e1[0].startedPos, e1[0].destination))
+route = astar.findRoute(e1[0].startedPos, e1[0].destination)
+print(route)
+
+
+while 1:
+    #프레임 체크를 위한 시작 시간
+    startTime = time.time()
+    #화면 초기화
+    dr.canvasClear()
+
+    ##메인 프로그램 작성
+
+    for i in range(len(map.walls)):
+        dr.DrawRectangle(map.walls[i].start * 10, map.walls[i].end * 10, 'black')
+    
+    #print(map.reigons.keys())
+    for i in map.reigons.keys():
+        dr.DrawRectangle2(map.reigons[i].start * 10, map.reigons[i].end * 10, 'red')
+        dr.DrawCircle(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])* 10, 10, 'red')
+
+        for j in range(len(route) - 1):
+            dr.DrawLine(np.array([route[j][0], route[j][1]])*10, np.array([route[j+1][0], route[j+1][1]])*10, 'green')
+
+    dr.windowUpdate()
+
+
+    #프레임 체크를 위한 루프의 마지막 시간
+    endTime = time.time()
+    dt = endTime - startTime
 
 
 
