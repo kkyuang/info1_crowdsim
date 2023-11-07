@@ -55,9 +55,10 @@ while 1:
     for i in range(len(map.walls)):
         dr.DrawRectangle(map.walls[i].start * 10, map.walls[i].end * 10, 'black')
     
-    print(map.reigons.keys())
+    #print(map.reigons.keys())
     for i in map.reigons.keys():
         dr.DrawRectangle2(map.reigons[i].start * 10, map.reigons[i].end * 10, 'red')
+        dr.DrawCircle(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])* 10, 20, 'red')
 
     #엔티티 그리기
     for i in range(len(Entities)):
@@ -72,6 +73,8 @@ while 1:
         map.grid[math.floor(Entities[i].position[0])][math.floor(Entities[i].position[1])] = Entities[i]
         
         dr.DrawCircle(Entities[i].position * 10, Entities[i].size * 40, Entities[i].color)
+        #dr.DrawCircle(Entities[i].destination * 10, Entities[i].size * 40, Entities[i].color)
+        #dr.DrawCircle(Entities[i].tempDestination * 10, Entities[i].size * 40, Entities[i].color)
 
     #dr.window.title(str(1/dt))
 
