@@ -5,6 +5,7 @@ import random
 import time
 import numpy as np
 import math
+from aStar import aStar
 
 #맵 생성
 
@@ -14,25 +15,25 @@ map.makeWall(np.array([25, 0]), np.array([28, 20]))
 map.makeWall(np.array([20, 20]), np.array([35, 23]))
 map.makeWall(np.array([20, 32]), np.array([35, 35]))
 map.makeWall(np.array([25, 32]), np.array([28, 48]))
-map.makeWall(np.array([0, 45]), np.array([64, 46]))
+map.makeWall(np.array([0, 45]), np.array([64, 48]))
 
 map.makeregion()
-
+ 
 
 #엔티티 생성
 
-n = 2
+n = 1
 
 
-e1 = [Entity(position=np.array([random.randrange(0, 20), random.randrange(0, 48)]), size=0.2, map=map) for i in range(n)]
+e1 = [Entity(position=np.array([random.randrange(0, 20), random.randrange(0, 40)]), size=0.2, map=map) for i in range(n)]
 for i in e1:
-    i.setDestRange(np.array([44, 0]), np.array([64, 48]))
+    i.setDestRange(np.array([44, 0]), np.array([64, 40]))
     i.destination = i.randomDestination(i.rangestart, i.rangeend, map)
     i.normalColor = 'blue'
 
-e2 = [Entity(position=np.array([random.randrange(44, 64), random.randrange(0, 48)]), size=0.2, map=map) for i in range(n)]
+e2 = [Entity(position=np.array([random.randrange(44, 64), random.randrange(0, 40)]), size=0.2, map=map) for i in range(n)]
 for i in e2:
-    i.setDestRange(np.array([0, 0]), np.array([20, 48]))
+    i.setDestRange(np.array([0, 0]), np.array([20, 40]))
     i.destination = i.randomDestination(i.rangestart, i.rangeend, map)
     i.normalColor = 'purple'
 
@@ -44,6 +45,15 @@ dr = Drawer(np.array([640, 480]))
 dt = 0.1
 
 startPosition = 0
+
+#aStar 탐색을 위한 클래스 객체
+astar = aStar(map)
+
+print(astar.findRoute(e1[0].startedPos, e1[0].destination))
+
+
+
+"""
 while 1:
     #프레임 체크를 위한 시작 시간
     startTime = time.time()
@@ -58,7 +68,9 @@ while 1:
     #print(map.reigons.keys())
     for i in map.reigons.keys():
         dr.DrawRectangle2(map.reigons[i].start * 10, map.reigons[i].end * 10, 'red')
-        dr.DrawCircle(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])* 10, 20, 'red')
+        dr.DrawCircle(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])* 10, 10, 'red')
+        for j in map.reigons[i].linkeds:
+            dr.DrawLine(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])*10, np.array([j[0], j[1]])*10, 'red')
 
     #엔티티 그리기
     for i in range(len(Entities)):
@@ -84,3 +96,5 @@ while 1:
     #프레임 체크를 위한 루프의 마지막 시간
     endTime = time.time()
     dt = endTime - startTime
+
+"""

@@ -31,6 +31,10 @@ class Drawer:
         self.canvas.create_rectangle(start[0], start[1], end[0], end[1], outline=color)
         self.canvas.pack()
 
+    def DrawLine(self, start, end, color):
+        self.canvas.create_line(start[0], start[1], end[0], end[1], fill=color, width=1)
+        self.canvas.pack()
+
     #창 띄우기(정적)
     def windowShow(self):
         self.window.mainloop()

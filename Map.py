@@ -87,8 +87,10 @@ class Map:
         for i in range(0, len(vertical_lines) - 1):
             for j in range(0, len(horizontal_lines) - 1):
 
-                directionx = [-1, 0, 1, -1, 1, -1, 0, 1]
-                directiony = [1, 1, 1, 0, 0, -1, -1, -1]
+                #directionx = [-1, 0, 1, -1, 1, -1, 0, 1]
+                #directiony = [1, 1, 1, 0, 0, -1, -1, -1]
+                directionx = [1, 0, 0, -1]
+                directiony = [0, -1, 1, 0]
                 
                 #현재 구역의 ID
                 start = np.array([vertical_lines[i], horizontal_lines[j]])
@@ -98,7 +100,7 @@ class Map:
 
                 #구역 내가 장애물이면 구역 추가에서 제외
                 if self.grid[start[0]][start[1]] != 1:
-                    for k in range(8):
+                    for k in range(len(directionx)):
                         #경계 오류 방지
                         if i + directionx[k] < 0 or i + directionx[k] + 1 >= len(vertical_lines):
                             continue

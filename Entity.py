@@ -3,6 +3,7 @@ from Map import Map
 from Map import Reigon
 import random
 import math
+from aStar import aStar 
 
 def norm(a, b):
     #유클리드 거리
@@ -29,6 +30,8 @@ class Entity:
         #현재 구역과 목적지의 구역. 0이면 초기상태.
         ##region id로.
 
+        self.startedPos = position
+
         self.nowReigon = 0
         self.destReigon = 0
 
@@ -36,7 +39,7 @@ class Entity:
         self.tempDestination = self.destination
 
         #들렸던 구역을 다시 들르지 않도록 제한
-        self.visitedRegions = set()
+        self.visitedRegions = []
 
     def setDestRange(self, rangestart, rangeend):
         self.rangestart = rangestart
@@ -81,9 +84,11 @@ class Entity:
             #목적지 정하기 -> 최종 목적지를 향한 다음 구역 탐색 A* 알고리즘
             #처음 실행시 -> 현재 구역의 id 얻기 및 목적지의 id 얻기
             #print(self.nowReigon == getReigon(self.position))
+            #self.nowReigon == getReigon(self.position) or 
             if self.nowReigon == getReigon(self.position) or self.nowReigon == 0:
                 self.nowReigon = getReigon(self.position)
                 self.destReigon = getReigon(self.destination)
+                print('reach')
             
                 #목적지와 같은 구역에 속해 있지 않을 때 임시 목표를 정함
                 if self.nowReigon == self.destReigon:
@@ -95,11 +100,11 @@ class Entity:
                     k = 0
                     for i in map.reigons[self.nowReigon].linkeds:
                         #현재와의 거리
-                        g = norm(self.position, np.array([i[0], i[1]]))
+                        g = norm(self.startedPos, np.array([i[0], i[1]]))
                         #목적지까지의 거리
                         h = norm(self.destination, np.array([i[0], i[1]]))
 
-                        costs[k] = g + k + (10 if i in self.visitedRegions else 0)
+                        costs[k] = g + k + (self.visitedRegions[i] if i in self.visitedRegions.keys() else 0)
                         k+=1
                     
                     #최솟값 구하기
@@ -111,7 +116,12 @@ class Entity:
                     #구역 및 임시 목적지 변경하기
                     if len(costs) > 0:
                         self.nowReigon = map.reigons[self.nowReigon].linkeds[minV]
-                        self.visitedRegions.add(self.nowReigon)
+                        for i in self.visitedRegions.keys():
+                            self.visitedRegions[i] *= 0.5
+                        if self.nowReigon in self.visitedRegions.keys():
+                            self.visitedRegions[self.nowReigon] += 1000
+                        else:
+                            self.visitedRegions[self.nowReigon] = 1000
                         #구역 내에서 랜덤하게
                         self.tempDestination = self.randomDestination(map.reigons[self.nowReigon].start, map.reigons[self.nowReigon].end, map)
                         #self.tempDestination = np.array([self.nowReigon[0], self.nowReigon[1]])
@@ -198,6 +208,7 @@ class Entity:
                 self.destination = self.randomDestination(self.rangestart, self.rangeend, map)
                 self.destReigon = 0
                 self.nowReigon = 0
+                self.visitedRegions = {}
 
 
             #벡터 졍규화
@@ -210,3 +221,4 @@ class Entity:
         newposition = self.position + velocity * dt
         #if map.grid[math.floor(newposition[0])][math.floor(newposition[1])] == 0:
         self.position = newposition
+        self.startedPos = newposition
