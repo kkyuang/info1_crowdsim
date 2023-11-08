@@ -17,7 +17,7 @@ class Entity:
         self.position = position.copy()
         self.size = size
 
-        self.speed = 10
+        self.speed = 3
         #self.destination = self.randomDestination(np.array([0, 0]), np.array([64, 48]), map)
         self.destination = 0
         self.state = 'normal'
@@ -67,12 +67,15 @@ class Entity:
         if self.state == 'normal':
 
             if np.linalg.norm(self.destination - self.position) < self.speed or self.tempDests == 0:
+                if np.linalg.norm(self.destination - self.position) < self.speed:
+                    self.state = ''
                 self.destination = self.randomDestination(self.rangestart, self.rangeend, map)
                 self.startedPos = self.position
         
                 sq = astar.findRoute(self.startedPos, self.destination)
                 self.tempDests = astar.routeToRandom(map, sq)
                 self.nowTempDest = 0
+
 
             #목적지 접근 시 목적지 변경
             if np.linalg.norm(self.tempDests[self.nowTempDest] - self.position) < 2:
