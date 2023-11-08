@@ -16,13 +16,14 @@ map.makeWall(np.array([20, 20]), np.array([35, 23]))
 map.makeWall(np.array([20, 32]), np.array([35, 35]))
 map.makeWall(np.array([25, 32]), np.array([28, 48]))
 map.makeWall(np.array([0, 45]), np.array([64, 48]))
+map.makeWall(np.array([5, 32]), np.array([8, 48]))
 
 map.makeregion()
  
 
 #엔티티 생성
 
-n = 1
+n = 30
 
 
 e1 = [Entity(position=np.array([random.uniform(0, 20), random.uniform(0, 40)]), size=0.2, map=map) for i in range(n)]
@@ -51,10 +52,9 @@ astar = aStar(map)
 
 
 
-route = astar.findRoute(e1[0].startedPos, e1[0].destination)
-print(route)
+route = astar.routeToRandom(map, astar.findRoute(e1[0].startedPos, e1[0].destination))
 
-
+"""
 while 1:
     #프레임 체크를 위한 시작 시간ç
     startTime = time.time()
@@ -71,11 +71,13 @@ while 1:
         dr.DrawRectangle2(map.reigons[i].start * 10, map.reigons[i].end * 10, 'red')
         dr.DrawCircle(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])* 10, 10, 'red')
 
-        for j in range(len(route) - 1):
-            dr.DrawLine(np.array([route[j][0], route[j][1]])*10, np.array([route[j+1][0], route[j+1][1]])*10, 'green')
+        #Astar 경로 표시
+        #for j in range(len(route) - 1):
+        #    dr.DrawLine(np.array([route[j][0], route[j][1]])*10, np.array([route[j+1][0], route[j+1][1]])*10, 'green')
 
-        for j in map.reigons[i].linkeds:
-            dr.DrawLine(np.array([i[0], i[1]])*10, np.array([j[0], j[1]])*10, 'red')
+        #연결된 링크들 표시
+        #for j in map.reigons[i].linkeds:
+        #    dr.DrawLine(np.array([i[0], i[1]])*10, np.array([j[0], j[1]])*10, 'red')
 
     dr.windowUpdate()
 
@@ -84,9 +86,9 @@ while 1:
     endTime = time.time()
     dt = endTime - startTime
 
-
-
 """
+
+
 while 1:
     #프레임 체크를 위한 시작 시간
     startTime = time.time()
@@ -111,7 +113,7 @@ while 1:
         if map.grid[math.floor(Entities[i].position[0])][math.floor(Entities[i].position[1])] != 1:
             map.grid[math.floor(Entities[i].position[0])][math.floor(Entities[i].position[1])] = 0
 
-        Entities[i].move(dt, map)
+        Entities[i].move(dt, map, astar)
 
         ##맵 새로고침
         #print(Entities[i].position)
@@ -120,6 +122,11 @@ while 1:
         dr.DrawCircle(Entities[i].position * 10, Entities[i].size * 40, Entities[i].color)
         #dr.DrawCircle(Entities[i].destination * 10, Entities[i].size * 40, Entities[i].color)
         #dr.DrawCircle(Entities[i].tempDestination * 10, Entities[i].size * 40, Entities[i].color)
+
+        #Astar 경로 표시
+        for j in range(len(e1[0].tempDests) - 1):
+            dr.DrawLine(np.array([e1[0].tempDests[j][0], e1[0].tempDests[j][1]])*10, np.array([e1[0].tempDests[j+1][0], e1[0].tempDests[j+1][1]])*10, 'green')
+
 
     #dr.window.title(str(1/dt))
 
@@ -130,4 +137,3 @@ while 1:
     endTime = time.time()
     dt = endTime - startTime
 
-"""

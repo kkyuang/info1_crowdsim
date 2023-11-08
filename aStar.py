@@ -41,6 +41,11 @@ class aStar:
         startRegion = self.getReigon(startpos)
         destReigon = self.getReigon(destination)
 
+        #오류방지: 같은 구역일 경우
+        if startRegion == destReigon:
+            return [destReigon]
+
+
         #닫힌 노드
         closed = [startRegion]
         closed_motherNode = {}
@@ -51,10 +56,6 @@ class aStar:
         if (startRegion, destReigon) in self.routes:
             return self.routes[(startRegion, destReigon)]
         else:
-            #시작 구역에서 탐색 시작하기
-            print('self : ' + str(startRegion))
-            print('self_linkeds : ' + str(self.map.reigons[startRegion].linkeds))
-
             #탐색중인 노드
             searching = self.map.reigons[startRegion].linkeds.copy()
             for i in searching:
@@ -64,7 +65,6 @@ class aStar:
             exNode = startRegion
             #목표 노드가 나올 때까지 반복
             while True:
-                print(searching)
                 #연결된 노드들의 cost 함수 매기기
                 costs = [float("inf") for i in range(len(searching))]
                 for i in range(len(searching)):
@@ -85,7 +85,7 @@ class aStar:
 
                 #탐색 범위가 모두 닫힌 노드뿐임
                 if minV == -1:
-                    return (startpos, destination)
+                    return 'error'
                         
                 closed.append(searching[minV])
                 for i in self.map.reigons[searching[minV]].linkeds:
@@ -97,14 +97,12 @@ class aStar:
 
                 #만약 새로 추가된 최소노드가 목표 노드라면?
                 if searching[minV] == destReigon:
-                    print(destReigon)
                     break
 
             #목표 노드의 부모 노드 찾아 나가기
             sequence = [destReigon]
             while True: #시작 노드가 나올 때까지 반복
                 sequence.append(closed_motherNode[sequence[len(sequence) - 1]])
-                print(sequence[len(sequence) - 1])
                 
                 if sequence[len(sequence) - 1] == startRegion:
                     break
@@ -114,9 +112,11 @@ class aStar:
         
     #구역 내 임의 목표 목록으로 변환하는 함수
     def routeToRandom(self, map:Map, sequence):
+        if sequence == 'error':
+            return 'error'
         randomSeq = []
         for i in sequence:
-            randomSeq += self.randomDestination(map.reigons[i].start, map.reigons[i].end, map)
+            randomSeq.append(self.randomDestination(map.reigons[i].start, map.reigons[i].end, map))
         
         return randomSeq
 

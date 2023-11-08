@@ -1,1 +1,1 @@
-searching[i]
+astar.routeToRandom(map, astar.findRoute(e1[0].startedPos, e1[0].destination))

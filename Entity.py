@@ -35,8 +35,9 @@ class Entity:
         self.nowReigon = 0
         self.destReigon = 0
 
-        #임시 목적지(길찾기에서)
-        self.tempDestination = self.destination
+        #임시 목적지 목록(길찾기에서)
+        self.tempDests = 0
+        self.nowTempDest = 0
 
         #들렸던 구역을 다시 들르지 않도록 제한
         self.visitedRegions = []
@@ -59,15 +60,33 @@ class Entity:
             if map.grid[math.floor(dest[0])][math.floor(dest[1])] == 0:
                 return dest
 
-    def move(self, dt, map: Map):
+    def move(self, dt, map: Map, astar: aStar):
         velocity = np.array([0, 0])
 
         ##일반적 배회 상태 알고리즘
         if self.state == 'normal':
 
+            if np.linalg.norm(self.destination - self.position) < self.speed or self.tempDests == 0:
+                self.destination = self.randomDestination(self.rangestart, self.rangeend, map)
+                self.startedPos = self.position
+        
+                sq = astar.findRoute(self.startedPos, self.destination)
+                self.tempDests = astar.routeToRandom(map, sq)
+                self.nowTempDest = 0
+
+            #목적지 접근 시 목적지 변경
+            if np.linalg.norm(self.tempDests[self.nowTempDest] - self.position) < 2:
+                if self.nowTempDest < len(self.tempDests) - 1:
+                    self.nowTempDest += 1
+                #마지막 구역에서는?
+                if self.nowTempDest == len(self.tempDests) - 1:
+                    #최종 목적지를 임시 목적지로 함.
+                    self.tempDests[self.nowTempDest] = self.destination
+
+
             #탐색 지점이 빈 공간일 때만 cost함수를 계산, 장애물이 존재할 때는 -1으로 한다.
             #탐색범위 순서: 좌상0, 상1, 우상2, 좌3, 우4, 좌하5, 하6, 우하7
-            cost = [0 for i in range(8)]
+            """cost = [0 for i in range(8)]
         
 
             #경계 충돌 판정
@@ -102,8 +121,8 @@ class Entity:
                             g = 1.4
 
                         search = np.array([math.floor(self.position[0]) + directionx[k] + 0.5, math.floor(self.position[1])  + directiony[k] + 0.5])
-                        h = norm(search, self.tempDestination)
-                        cost[k] = g + h
+                        h = norm(search, self.tempDests[self.nowTempDest])
+                        cost[k] = h
                     else:
                         cost[k] = -1
 
@@ -131,15 +150,10 @@ class Entity:
             else: #사방이 장애물로 둘러싸인 경우
                 self.color = "red"
                 pass
-                    
-
-            #목적지 접근 시 목적지 변경
-            if np.linalg.norm(self.destination - self.position) < self.speed:
-                print('dest!')
-                self.destination = self.randomDestination(self.rangestart, self.rangeend, map)
-                self.destReigon = 0
-                self.nowReigon = 0
-                self.visitedRegions = {}
+                    """
+        
+            self.color = self.normalColor
+            direction = (self.tempDests[self.nowTempDest] - self.position) / norm(self.position, self.tempDests[self.nowTempDest])
 
 
             #벡터 졍규화
