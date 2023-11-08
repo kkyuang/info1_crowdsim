@@ -104,12 +104,14 @@ class Map:
                         #경계 오류 방지
                         if i + directionx[k] < 0 or i + directionx[k] + 1 >= len(vertical_lines):
                             continue
-                        if i + directiony[k] < 0 or j + 1 + directiony[k] >= len(horizontal_lines):
+                        if j + directiony[k] < 0 or j + 1 + directiony[k] >= len(horizontal_lines):
                             continue
                 
                         #연결할 구역의 ID
                         start1 = np.array([vertical_lines[i + directionx[k]], horizontal_lines[j + directiony[k]]])
                         end1 = np.array([vertical_lines[i + 1 + directionx[k]], horizontal_lines[j + 1 + directiony[k]]])
+                        if vertical_lines[i] == 0 and horizontal_lines[j] == 35:
+                            print(start1, end1)
                         #연결할 구역이 장애물이 아니여야 함
                         if self.grid[math.floor((start1[0] + end1[0]) / 2)][math.floor((start1[1] + end1[1]) / 2)] != 1 and self.getReigonID(start1, end1) in self.reigons :
                             if start[0] < end[0]:

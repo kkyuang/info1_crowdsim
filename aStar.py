@@ -52,9 +52,11 @@ class aStar:
             return self.routes[(startRegion, destReigon)]
         else:
             #시작 구역에서 탐색 시작하기
+            print('self : ' + str(startRegion))
+            print('self_linkeds : ' + str(self.map.reigons[startRegion].linkeds))
 
             #탐색중인 노드
-            searching = self.map.reigons[startRegion].linkeds
+            searching = self.map.reigons[startRegion].linkeds.copy()
             for i in searching:
                 closed_motherNode[i] = startRegion
                 distances[i] = self.distReigon(startRegion, i)
@@ -62,6 +64,7 @@ class aStar:
             exNode = startRegion
             #목표 노드가 나올 때까지 반복
             while True:
+                print(searching)
                 #연결된 노드들의 cost 함수 매기기
                 costs = [float("inf") for i in range(len(searching))]
                 for i in range(len(searching)):
@@ -85,8 +88,11 @@ class aStar:
                     return (startpos, destination)
                         
                 closed.append(searching[minV])
-                searching += self.map.reigons[searching[minV]].linkeds
-                closed_motherNode[searching[minV]] = exNode
+                for i in self.map.reigons[searching[minV]].linkeds:
+                    if not (i in closed):
+                        searching.append(i)
+                if not searching[minV] in closed_motherNode:
+                    closed_motherNode[searching[minV]] = exNode
                 exNode = searching[minV]
 
                 #만약 새로 추가된 최소노드가 목표 노드라면?

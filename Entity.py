@@ -18,8 +18,8 @@ class Entity:
         self.size = size
 
         self.speed = 10
-        self.destination = self.randomDestination(np.array([0, 0]), np.array([64, 48]), map)
-
+        #self.destination = self.randomDestination(np.array([0, 0]), np.array([64, 48]), map)
+        self.destination = 0
         self.state = 'normal'
 
         self.randomnoise = np.array([random.random(), random.random()])

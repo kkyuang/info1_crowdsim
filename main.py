@@ -49,12 +49,14 @@ startPosition = 0
 #aStar 탐색을 위한 클래스 객체
 astar = aStar(map)
 
+
+
 route = astar.findRoute(e1[0].startedPos, e1[0].destination)
 print(route)
 
 
 while 1:
-    #프레임 체크를 위한 시작 시간
+    #프레임 체크를 위한 시작 시간ç
     startTime = time.time()
     #화면 초기화
     dr.canvasClear()
@@ -71,6 +73,9 @@ while 1:
 
         for j in range(len(route) - 1):
             dr.DrawLine(np.array([route[j][0], route[j][1]])*10, np.array([route[j+1][0], route[j+1][1]])*10, 'green')
+
+        for j in map.reigons[i].linkeds:
+            dr.DrawLine(np.array([i[0], i[1]])*10, np.array([j[0], j[1]])*10, 'red')
 
     dr.windowUpdate()
 
