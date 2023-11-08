@@ -11,12 +11,33 @@ class Drawer:
         self.window=tkinter.Tk()
         self.screensize = screensize
 
-        self.window.title("HELLO")
+        self.window.title("군중 시뮬레이션")
         self.window.geometry(str(screensize[0]) + "x" + str(screensize[1]) + "+100+100")
-        self.window.resizable(False, False)
+        self.window.resizable(False, False)# 버튼 만들기 + 옵션 설정
+
 
         #캔버스 정의
         self.canvas = tkinter.Canvas(self.window, width=screensize[0], height=screensize[1], bd=2)
+        self.position_label = tkinter.Label(self.window, text="마우스 좌표:")
+
+    #버튼 생성
+    def makeBtn(self, label):
+
+        btn = tkinter.Button(self.window,
+        text = label,
+        background = 'white')
+ 
+        # 버튼 옵션설정
+        btn.config(width = 5, height = 2)
+ 
+        # 버튼 배치하기
+        btn.pack()
+
+    #텍스트 좌표 안내
+    def coordinateText(self):
+        x, y = self.canvas.winfo_pointerx() - self.canvas.winfo_rootx(), self.canvas.winfo_pointery()- self.canvas.winfo_rooty()
+        self.position_label.config(text=f"현재 좌표: x={x/10}, y={y/10}")
+        self.position_label.pack()
 
     #원 그리기
     def DrawCircle(self, center, radius, color):

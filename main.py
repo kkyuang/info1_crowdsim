@@ -14,9 +14,10 @@ map = Map(np.array([700, 500]))
 map.makeWall(np.array([25, 0]), np.array([28, 20]))
 map.makeWall(np.array([20, 20]), np.array([35, 23]))
 map.makeWall(np.array([20, 32]), np.array([35, 35]))
-map.makeWall(np.array([25, 32]), np.array([28, 48]))
+#map.makeWall(np.array([25, 32]), np.array([28, 48]))
 map.makeWall(np.array([0, 45]), np.array([64, 48]))
 map.makeWall(np.array([5, 32]), np.array([8, 48]))
+map.makeWall(np.array([47, 32]), np.array([50, 48]))
 
 map.makeregion()
 
@@ -26,7 +27,7 @@ astar = aStar(map)
 
 #엔티티 생성
 
-n = 300
+n = 50
 
 
 e1 = [Entity(size=0.2) for i in range(n)]
@@ -52,7 +53,7 @@ for i in e2:
 Entities = e1 + e2
 
 
-dr = Drawer(np.array([640, 480]))    
+dr = Drawer(np.array([700, 600]))    
 
 dt = 0.1
 
@@ -92,12 +93,16 @@ while 1:
 """
 
 
+dr.makeBtn("재난 발생")
+
+
 while 1:
     #프레임 체크를 위한 시작 시간
     startTime = time.time()
     #화면 초기화
     dr.canvasClear()
 
+    dr.coordinateText()
     ##메인 프로그램 작성
 
     for i in range(len(map.walls)):
