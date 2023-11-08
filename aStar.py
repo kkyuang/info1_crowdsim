@@ -30,6 +30,13 @@ class aStar:
 
         return self.map.getReigonID(myReigonStart, myReigonEnd)
     
+    def isinReigon(self, position, map:Map):
+        if self.getReigon(position) in map.reigons.keys():
+            return True
+        else:
+            return False
+            
+    
     #구역 간 거리 매기기
     def distReigon(self, start, end):
         dest = abs(start[0] - end[0]) + abs(start[1] - end[1])
@@ -124,7 +131,7 @@ class aStar:
     def randomDestination(self, rangestart, rangeend, map):
         while True:
             dest = np.array([random.uniform(rangestart[0], rangeend[0]), random.uniform(rangestart[1], rangeend[1])])
-            if map.grid[math.floor(dest[0])][math.floor(dest[1])] == 0:
+            if self.isinReigon(dest, map):
                 return dest
                 
             

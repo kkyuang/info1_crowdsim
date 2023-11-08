@@ -13,8 +13,7 @@ def norm(a, b):
     #return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 class Entity:
-    def __init__(self, position, size, map):
-        self.position = position.copy()
+    def __init__(self, size):
         self.size = size
 
         self.speed = 3
@@ -30,8 +29,6 @@ class Entity:
         #현재 구역과 목적지의 구역. 0이면 초기상태.
         ##region id로.
 
-        self.startedPos = position
-
         self.nowReigon = 0
         self.destReigon = 0
 
@@ -42,9 +39,14 @@ class Entity:
         #들렸던 구역을 다시 들르지 않도록 제한
         self.visitedRegions = []
 
+
+    def setSpawnRange(self, rangestart, rangeend):
+        self.spawnRangeStart = rangestart
+        self.spawnRangeEnd = rangeend
+
     def setDestRange(self, rangestart, rangeend):
-        self.rangestart = rangestart
-        self.rangeend = rangeend
+        self.destRangeStart = rangestart
+        self.destRangeEnd = rangeend
 
     #범위 내부인지 판단
     def isinRange(self, position, rangestart, rangeend):
@@ -54,10 +56,10 @@ class Entity:
             return False
 
     #범위 내에서 랜덤인 목적지를 설정
-    def randomDestination(self, rangestart, rangeend, map):
+    def randomDestination(self, rangestart, rangeend, map, astar: aStar):
         while True:
             dest = np.array([random.uniform(rangestart[0], rangeend[0]), random.uniform(rangestart[1], rangeend[1])])
-            if map.grid[math.floor(dest[0])][math.floor(dest[1])] == 0:
+            if astar.isinReigon(dest, map):
                 return dest
 
     def move(self, dt, map: Map, astar: aStar):
@@ -67,11 +69,11 @@ class Entity:
         if self.state == 'normal':
 
             if np.linalg.norm(self.destination - self.position) < self.speed or self.tempDests == 0:
-                if np.linalg.norm(self.destination - self.position) < self.speed:
-                    self.state = ''
-                self.destination = self.randomDestination(self.rangestart, self.rangeend, map)
+
+                self.destination = self.randomDestination(self.destRangeStart, self.destRangeEnd, map, astar)
+                self.position = self.randomDestination(self.spawnRangeStart, self.spawnRangeEnd, map, astar)
                 self.startedPos = self.position
-        
+
                 sq = astar.findRoute(self.startedPos, self.destination)
                 self.tempDests = astar.routeToRandom(map, sq)
                 self.nowTempDest = 0

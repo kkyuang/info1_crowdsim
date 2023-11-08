@@ -19,23 +19,34 @@ map.makeWall(np.array([0, 45]), np.array([64, 48]))
 map.makeWall(np.array([5, 32]), np.array([8, 48]))
 
 map.makeregion()
+
+#aStar 탐색을 위한 클래스 객체
+astar = aStar(map)
  
 
 #엔티티 생성
 
-n = 30
+n = 300
 
 
-e1 = [Entity(position=np.array([random.uniform(0, 20), random.uniform(0, 40)]), size=0.2, map=map) for i in range(n)]
+e1 = [Entity(size=0.2) for i in range(n)]
 for i in e1:
     i.setDestRange(np.array([44, 0]), np.array([64, 40]))
-    i.destination = i.randomDestination(i.rangestart, i.rangeend, map)
+    i.setSpawnRange(np.array([0, 0]), np.array([20, 40]))
+
+    i.position = i.randomDestination(i.spawnRangeStart, i.spawnRangeEnd, map, astar)
+
+    i.destination = i.randomDestination(i.destRangeStart, i.destRangeEnd, map, astar)
     i.normalColor = 'blue'
 
-e2 = [Entity(position=np.array([random.uniform(44, 64), random.uniform(0, 40)]), size=0.2, map=map) for i in range(n)]
+e2 = [Entity(size=0.2) for i in range(n)]
 for i in e2:
     i.setDestRange(np.array([0, 0]), np.array([20, 40]))
-    i.destination = i.randomDestination(i.rangestart, i.rangeend, map)
+    i.setSpawnRange(np.array([44, 0]), np.array([64, 40]))
+
+    i.position = i.randomDestination(i.spawnRangeStart, i.spawnRangeEnd, map, astar)
+
+    i.destination = i.randomDestination(i.destRangeStart, i.destRangeEnd, map, astar)
     i.normalColor = 'purple'
 
 Entities = e1 + e2
@@ -45,14 +56,6 @@ dr = Drawer(np.array([640, 480]))
 
 dt = 0.1
 
-startPosition = 0
-
-#aStar 탐색을 위한 클래스 객체
-astar = aStar(map)
-
-
-
-route = astar.routeToRandom(map, astar.findRoute(e1[0].startedPos, e1[0].destination))
 
 """
 while 1:

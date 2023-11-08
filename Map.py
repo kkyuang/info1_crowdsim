@@ -28,6 +28,8 @@ class Map:
 
     def getReigonID(self, start, end):
         return ((start[0] + end[0])/2, (start[1] + end[1])/2)
+
+    
         
     def makeWall(self, start, end):
         for i in range(start[0], end[0]):
