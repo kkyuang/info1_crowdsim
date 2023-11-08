@@ -66,17 +66,22 @@ class Entity:
         velocity = np.array([0, 0])
 
         ##일반적 배회 상태 알고리즘
-        if self.state == 'normal':
+        if True:
 
             if np.linalg.norm(self.destination - self.position) < self.speed or self.tempDests == 0:
-
-                self.destination = self.randomDestination(self.destRangeStart, self.destRangeEnd, map, astar)
                 self.position = self.randomDestination(self.spawnRangeStart, self.spawnRangeEnd, map, astar)
+
+                if self.state == 'normal':
+                    self.destination = self.randomDestination(self.destRangeStart, self.destRangeEnd, map, astar)
+                else:
+                    self.destination =np.array([3, 39])
+                 
                 self.startedPos = self.position
 
                 sq = astar.findRoute(self.startedPos, self.destination)
                 self.tempDests = astar.routeToRandom(map, sq)
                 self.nowTempDest = 0
+                self.speed = random.uniform(1, 4)
 
 
             #목적지 접근 시 목적지 변경

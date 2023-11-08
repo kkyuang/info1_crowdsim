@@ -9,7 +9,7 @@ from aStar import aStar
 
 #맵 생성
 
-map = Map(np.array([700, 500]))
+map = Map(np.array([70, 50]))
 
 map.makeWall(np.array([25, 0]), np.array([28, 20]))
 map.makeWall(np.array([20, 20]), np.array([35, 23]))
@@ -27,7 +27,7 @@ astar = aStar(map)
 
 #엔티티 생성
 
-n = 50
+n = 300
 
 
 e1 = [Entity(size=0.2) for i in range(n)]
@@ -92,8 +92,25 @@ while 1:
 
 """
 
+def btnChange():
+    print('btn click')
+    for i in e1:
+        i.destination = np.array([3,39])
+        i.startedPos = i.position
+        sq = astar.findRoute(i.startedPos, i.destination)
+        i.tempDests = astar.routeToRandom(map, sq)
+        i.nowTempDest = 0
+        i.state = 'fire'
+    for i in e2:
+        i.destination = np.array([3, 39])
+        i.startedPos = i.position
+        sq = astar.findRoute(i.startedPos, i.destination)
+        i.tempDests = astar.routeToRandom(map, sq)
+        i.nowTempDest = 0
+        i.state = 'fire'
 
-dr.makeBtn("재난 발생")
+firebtn = dr.makeBtn("재난 발생", btnChange)
+
 
 
 while 1:

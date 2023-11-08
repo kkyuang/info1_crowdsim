@@ -21,17 +21,19 @@ class Drawer:
         self.position_label = tkinter.Label(self.window, text="마우스 좌표:")
 
     #버튼 생성
-    def makeBtn(self, label):
+    def makeBtn(self, label, cmd):
 
         btn = tkinter.Button(self.window,
         text = label,
         background = 'white')
  
         # 버튼 옵션설정
-        btn.config(width = 5, height = 2)
+        btn.config(width = 5, height = 2, command=cmd)
  
         # 버튼 배치하기
         btn.pack()
+
+        return btn
 
     #텍스트 좌표 안내
     def coordinateText(self):
