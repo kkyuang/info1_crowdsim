@@ -46,6 +46,7 @@ for i in e2:
     i.setDestRange(np.array([0, 0]), np.array([20, 40]))
     i.setSpawnRange(np.array([44, 0]), np.array([64, 40]))
 
+
     i.position = i.randomDestination(i.spawnRangeStart, i.spawnRangeEnd, map, astar)
     map.reigonsPopulation[astar.getReigon(i.position)] += 1
 
