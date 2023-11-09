@@ -27,7 +27,7 @@ astar = aStar(map)
 
 #엔티티 생성
 
-n = 30
+n = 300
 
 
 e1 = [Entity(size=0.2) for i in range(n)]
@@ -36,6 +36,7 @@ for i in e1:
     i.setSpawnRange(np.array([0, 0]), np.array([20, 40]))
 
     i.position = i.randomDestination(i.spawnRangeStart, i.spawnRangeEnd, map, astar)
+    map.reigonsPopulation[astar.getReigon(i.position)] += 1
 
     i.destination = i.randomDestination(i.destRangeStart, i.destRangeEnd, map, astar)
     i.normalColor = 'blue'
@@ -46,6 +47,7 @@ for i in e2:
     i.setSpawnRange(np.array([44, 0]), np.array([64, 40]))
 
     i.position = i.randomDestination(i.spawnRangeStart, i.spawnRangeEnd, map, astar)
+    map.reigonsPopulation[astar.getReigon(i.position)] += 1
 
     i.destination = i.randomDestination(i.destRangeStart, i.destRangeEnd, map, astar)
     i.normalColor = 'purple'
@@ -109,6 +111,7 @@ def fire(event):
             i.nowTempDest = 0
             i.state = 'fire'
             i.destinations['fire'] = np.array([mousepos[0], mousepos[1]])
+            map.reigonsPopulation[astar.getReigon(i.position)] += 1
         for i in e2:
             i.destination = np.array([mousepos[0], mousepos[1]])
             i.startedPos = i.position
@@ -117,6 +120,7 @@ def fire(event):
             i.nowTempDest = 0
             i.state = 'fire'
             i.destinations['fire'] = np.array([mousepos[0], mousepos[1]])
+            map.reigonsPopulation[astar.getReigon(i.position)] += 1
 
 
 firebtn = dr.makeBtn("재난 발생", btnChange)
@@ -137,8 +141,19 @@ while 1:
         dr.DrawRectangle(map.walls[i].start * 10, map.walls[i].end * 10, 'black')
     
     #print(map.reigons.keys())
+
+    #구역 표시하기
     for i in map.reigons.keys():
-        dr.DrawRectangle2(map.reigons[i].start * 10, map.reigons[i].end * 10, 'red')
+        d = map.regionDensity(i)
+        print(d)
+        if d < 10:
+            dr.DrawRectangle(map.reigons[i].start * 10, map.reigons[i].end * 10, 'blue')
+        elif 10 <= d and d < 40:
+            dr.DrawRectangle(map.reigons[i].start * 10, map.reigons[i].end * 10, 'green')
+        elif 40 <= d and d < 70:
+            dr.DrawRectangle(map.reigons[i].start * 10, map.reigons[i].end * 10, 'yellow')
+        elif 100 <= d:
+            dr.DrawRectangle(map.reigons[i].start * 10, map.reigons[i].end * 10, 'red')
         dr.DrawCircle(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])* 10, 10, 'red')
         for j in map.reigons[i].linkeds:
             dr.DrawLine(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])*10, np.array([j[0], j[1]])*10, 'red')

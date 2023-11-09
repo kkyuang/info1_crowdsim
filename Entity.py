@@ -175,8 +175,14 @@ class Entity:
 
             velocity = direction * self.speed
 
+        if astar.getReigon(self.position) in map.reigons.keys():
+            map.reigonsPopulation[astar.getReigon(self.position)] -= 1
         #목적지 방향으로 미소거리 더하기
         newposition = self.position + velocity * dt
         #if map.grid[math.floor(newposition[0])][math.floor(newposition[1])] == 0:
         self.position = newposition
+        if astar.getReigon(self.position) in map.reigons.keys():
+            map.reigonsPopulation[astar.getReigon(self.position)] += 1
         self.startedPos = newposition
+
+        
