@@ -52,68 +52,84 @@ class aStar:
         if startRegion == destReigon:
             return [destReigon]
 
+        #열린 노드
+        openLists = [startRegion]
 
         #닫힌 노드
-        closed = [startRegion]
+        closed = []
+
         closed_motherNode = {}
-        distances = {}
-        distances[startRegion] = 0
+
+        #함수들 정의
+        g = {}
+        h = {}
+        f = {}
+        g[startRegion] = 0
+        h[startRegion] = self.distReigon(startRegion, destReigon)
+        f[startRegion] = h[startRegion]
 
         #저장된 경로에 존재할 경우
         if (startRegion, destReigon) in self.routes:
             return self.routes[(startRegion, destReigon)]
         else:
-            #탐색중인 노드
-            searching = self.map.reigons[startRegion].linkeds.copy()
-            for i in searching:
-                closed_motherNode[i] = startRegion
-                distances[i] = self.distReigon(startRegion, i)
+            while openLists:
+                currentNode = openLists[0]
+                currentIdx = 0
 
-            exNode = startRegion
-            #목표 노드가 나올 때까지 반복
-            while True:
-                #연결된 노드들의 cost 함수 매기기
-                costs = [float("inf") for i in range(len(searching))]
-                for i in range(len(searching)):
-                    if not (searching[i] in closed):
-                        distances[searching[i]] = distances[exNode] + self.distReigon(exNode, searching[i])
-                        g = distances[searching[i]]
-                        h = self.distReigon(searching[i], destReigon)
-                        costs[i] = g + h
+                for i in range(len(openLists)):
+                    if f[openLists[i]] < f[currentNode] and not(openLists[i] in closed):
+                        currentNode = openLists[i]
+                        currentIdx = i
 
-                #최소 노드 확인 후 closed에 추가 및 탐색중인 노드 범위 넓히기
-                minV = -1
-                for i in range(len(searching)):
-                    if minV == -1:
-                        if not (searching[i] in closed):
-                            minV = i
-                    if costs[i] < costs[minV] and not (searching[i] in closed):
-                        minV = i
+                openLists.pop(currentIdx)
+                closed.append(currentNode)
 
-                #탐색 범위가 모두 닫힌 노드뿐임
-                if minV == -1:
-                    return 'error'
-                        
-                closed.append(searching[minV])
-                for i in self.map.reigons[searching[minV]].linkeds:
-                    if not (i in closed):
-                        searching.append(i)
-                if not searching[minV] in closed_motherNode:
-                    closed_motherNode[searching[minV]] = exNode
-                exNode = searching[minV]
 
-                #만약 새로 추가된 최소노드가 목표 노드라면?
-                if searching[minV] == destReigon:
+                #목표 노드의 부모 노드 찾아 나가기
+                if currentNode == destReigon:
                     break
+                        
+                #새로 탐색할 노드를 자신의 자식으로 만들기
+                children = self.map.reigons[currentNode].linkeds.copy()
+                for i in children:
+                    if currentNode in closed_motherNode:
+                        if closed_motherNode[currentNode] == i:
+                            continue
+                    closed_motherNode[i] = currentNode
 
-            #목표 노드의 부모 노드 찾아 나가기
+                for child in children:
+                    if child in closed:
+                        continue
+                    g[child] = g[currentNode] + self.distReigon(currentNode, child)
+                    h[child] = self.distReigon(child, destReigon)
+                    f[child] = g[child] + h[child]
+                    if len([openNode for openNode in openLists 
+                           if child == openNode and g[child] > g[openNode]]) > 0:
+                        continue
+                        
+                    openLists.append(child)
+            
+            #print("end")
+            #print(startRegion)
+            #print(closed)
+            #print(closed_motherNode)
+            #print(destReigon)
+
+            #목적지의 부모가 정해지지 않으면?
+            if not(destReigon in closed_motherNode):
+                return 'error'
+
             sequence = [destReigon]
+
             while True: #시작 노드가 나올 때까지 반복
+                if closed_motherNode[sequence[len(sequence) - 1]] in sequence:
+                    break
                 sequence.append(closed_motherNode[sequence[len(sequence) - 1]])
-                
                 if sequence[len(sequence) - 1] == startRegion:
                     break
 
+            
+            print(sequence)
             sequence.reverse()
             return sequence
         

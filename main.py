@@ -27,7 +27,7 @@ astar = aStar(map)
 
 #엔티티 생성
 
-n = 1000
+n = 30
 
 
 e1 = [Entity(size=0.2) for i in range(n)]
@@ -93,24 +93,35 @@ while 1:
 
 """
 
+isFire = False
+
 def btnChange():
     print('btn click')
-    for i in e1:
-        i.destination = np.array([3,39])
-        i.startedPos = i.position
-        sq = astar.findRoute(i.startedPos, i.destination)
-        i.tempDests = astar.routeToRandom(map, sq)
-        i.nowTempDest = 0
-        i.state = 'fire'
-    for i in e2:
-        i.destination = np.array([3, 39])
-        i.startedPos = i.position
-        sq = astar.findRoute(i.startedPos, i.destination)
-        i.tempDests = astar.routeToRandom(map, sq)
-        i.nowTempDest = 0
-        i.state = 'fire'
+    dr.clickEvent(fire)
+
+def fire(event):
+    if True:
+        mousepos = dr.mousePos()
+        for i in e1:
+            i.destination = np.array([mousepos[0], mousepos[1]])
+            i.startedPos = i.position
+            i.sq = astar.findRoute(i.startedPos, i.destination)
+            i.tempDests = astar.routeToRandom(map, i.sq)
+            i.nowTempDest = 0
+            i.state = 'fire'
+            i.destinations['fire'] = np.array([mousepos[0], mousepos[1]])
+        for i in e2:
+            i.destination = np.array([mousepos[0], mousepos[1]])
+            i.startedPos = i.position
+            i.sq = astar.findRoute(i.startedPos, i.destination)
+            i.tempDests = astar.routeToRandom(map, i.sq)
+            i.nowTempDest = 0
+            i.state = 'fire'
+            i.destinations['fire'] = np.array([mousepos[0], mousepos[1]])
+
 
 firebtn = dr.makeBtn("재난 발생", btnChange)
+
 
 
 
@@ -152,6 +163,9 @@ while 1:
         #Astar 경로 표시
         for j in range(len(e1[0].tempDests) - 1):
             dr.DrawLine(np.array([e1[0].tempDests[j][0], e1[0].tempDests[j][1]])*10, np.array([e1[0].tempDests[j+1][0], e1[0].tempDests[j+1][1]])*10, 'green')
+
+        for j in range(len(e1[0].sq) - 1):
+            dr.DrawLine(np.array([e1[0].sq[j][0], e1[0].sq[j][1]])*10, np.array([e1[0].sq[j+1][0], e1[0].sq[j+1][1]])*10, 'blue')
 
 
     #dr.window.title(str(1/dt))

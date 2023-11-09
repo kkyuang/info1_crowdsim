@@ -1,0 +1,49 @@
+
+
+
+
+
+            #탐색중인 노드
+"""         searching = self.map.reigons[startRegion].linkeds.copy()
+            for i in searching:
+                closed_motherNode[i] = startRegion
+                g[i] = self.distReigon(startRegion, i)
+
+            exNode = startRegion
+            #목표 노드가 나올 때까지 반복
+            while True:
+                #연결된 노드들의 cost 함수 매기기
+                costs = [float("inf") for i in range(len(searching))]
+                for i in range(len(searching)):
+                    if not (searching[i] in closed):
+                        distances[searching[i]] = distances[exNode] + self.distReigon(exNode, searching[i])
+                        g = distances[searching[i]]
+                        h = self.distReigon(searching[i], destReigon)
+                        costs[i] = g + h
+
+                #최소 노드 확인 후 closed에 추가 및 탐색중인 노드 범위 넓히기
+                minV = -1
+                for i in range(len(searching)):
+                    if minV == -1:
+                        if not (searching[i] in closed):
+                            minV = i
+                    if costs[i] < costs[minV] and not (searching[i] in closed):
+                        minV = i
+
+                #탐색 범위가 모두 닫힌 노드뿐임
+                if minV == -1:
+                    return 'error'
+                        
+                closed.append(searching[minV])
+                for i in self.map.reigons[searching[minV]].linkeds:
+                    if not (i in closed):
+                        searching.append(i)
+                if not searching[minV] in closed_motherNode:
+                    closed_motherNode[searching[minV]] = exNode
+                exNode = searching[minV]
+
+                #만약 새로 추가된 최소노드가 목표 노드라면?
+                if searching[minV] == destReigon:
+                    break
+
+"""
