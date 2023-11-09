@@ -26,6 +26,8 @@ class Entity:
         self.color = 'black'
         self.normalColor = 'black'
 
+        self.sq = []
+
         #현재 구역과 목적지의 구역. 0이면 초기상태.
         ##region id로.
 
@@ -38,6 +40,7 @@ class Entity:
 
         #들렸던 구역을 다시 들르지 않도록 제한
         self.visitedRegions = []
+        self.destinations = {}
 
 
     def setSpawnRange(self, rangestart, rangeend):
@@ -73,13 +76,13 @@ class Entity:
 
                 if self.state == 'normal':
                     self.destination = self.randomDestination(self.destRangeStart, self.destRangeEnd, map, astar)
-                else:
-                    self.destination =np.array([3, 39])
+                elif self.state == 'fire':
+                    self.destination = self.destinations[self.state]
                  
                 self.startedPos = self.position
 
-                sq = astar.findRoute(self.startedPos, self.destination)
-                self.tempDests = astar.routeToRandom(map, sq)
+                self.sq = astar.findRoute(self.startedPos, self.destination)
+                self.tempDests = astar.routeToRandom(map, self.sq)
                 self.nowTempDest = 0
                 self.speed = random.uniform(1, 4)
 

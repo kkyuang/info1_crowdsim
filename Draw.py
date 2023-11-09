@@ -34,6 +34,16 @@ class Drawer:
         btn.pack()
 
         return btn
+    
+    #클릭 이벤트 생성
+    def clickEvent(self, event):
+        self.canvas.bind("<Button-1>", event)
+    
+    #마우스 좌표 획득
+    def mousePos(self):
+        x, y = self.canvas.winfo_pointerx() - self.canvas.winfo_rootx(), self.canvas.winfo_pointery()- self.canvas.winfo_rooty()
+        return (x/10, y/10)
+
 
     #텍스트 좌표 안내
     def coordinateText(self):
