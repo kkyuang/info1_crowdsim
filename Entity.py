@@ -16,7 +16,7 @@ class Entity:
     def __init__(self, size):
         self.size = size
 
-        self.speed = 3
+        self.speed = 100
         #self.destination = self.randomDestination(np.array([0, 0]), np.array([64, 48]), map)
         self.destination = 0
         self.state = 'normal'

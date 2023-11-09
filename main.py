@@ -27,7 +27,7 @@ astar = aStar(map)
 
 #엔티티 생성
 
-n = 300
+n = 1000
 
 
 e1 = [Entity(size=0.2) for i in range(n)]
@@ -44,6 +44,7 @@ e2 = [Entity(size=0.2) for i in range(n)]
 for i in e2:
     i.setDestRange(np.array([0, 0]), np.array([20, 40]))
     i.setSpawnRange(np.array([44, 0]), np.array([64, 40]))
+
 
     i.position = i.randomDestination(i.spawnRangeStart, i.spawnRangeEnd, map, astar)
 

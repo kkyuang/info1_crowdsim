@@ -1,7 +1,7 @@
-
 from PIL import Image
 
-im = Image.open("test2.png")
+
+im = Image.open("goose.jpg")
 
 im.show()
 
