@@ -129,7 +129,6 @@ class aStar:
                     break
 
             
-            print(sequence)
             sequence.reverse()
             return sequence
         

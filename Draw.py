@@ -13,7 +13,7 @@ class Drawer:
 
         self.window.title("군중 시뮬레이션")
         self.window.geometry(str(screensize[0]) + "x" + str(screensize[1]) + "+100+100")
-        self.window.resizable(False, False)# 버튼 만들기 + 옵션 설정
+        self.window.resizable(True, True)# 버튼 만들기 + 옵션 설정
 
 
         #캔버스 정의
