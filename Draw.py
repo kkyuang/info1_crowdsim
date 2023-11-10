@@ -19,7 +19,22 @@ class Drawer:
         #캔버스 정의
         self.canvas = tkinter.Canvas(self.window, width=screensize[0], height=screensize[1], bd=2)
         self.position_label = tkinter.Label(self.window, text="마우스 좌표:")
+    def _from_rgb(self, r, g, b):
+        """translates an rgb tuple of int to a tkinter friendly color code
+        """
+            
+        r = int(r)
+        g = int(g)
+        b = int(b)
 
+        if r < 0:
+            r = 0
+        if g < 0:
+            g = 0
+        if b < 0:
+            b = 0
+
+        return f'#{r:02x}{g:02x}{b:02x}'
     #버튼 생성
     def makeBtn(self, label, cmd):
 
