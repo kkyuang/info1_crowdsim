@@ -37,17 +37,23 @@ for i in range(x) :
         print(arr[i][j],end=" ")
     print()
 
-
-# 성준이의 직사각형 긁기 함수 ^^
-for i in range(x) : # 세로(i) 순차 탐색
-    for j in range(y) : # 가로(j) 순차 탐색
-        if(arr[i][j]!=0): # 순차 탐색에서 배열 값이 0이 아니라면
-            pos1 = [i, j] # 최초로 0이 아닌 지점 저장
-            j += 1 # pos1부터 가로(j)로 긁기
-            if(arr[i][j]==0) : # 긁다가 0이 아닌 지점이 끝났다면
-                j -= 1 # j가 현재 0에 있으므로 1 빼기
-                if(arr[i][j]!=0) : # 현재 위치의 배열 값이 0이 아니라면
-                    i += 1 # 세로로 긁기
-                    if(arr[i][j]==0) : # 긁다가 0이 아닌 지점이 끝났다면
-                        i -= 1 # i가 현재 0에 있으므로 1 빼기
-                        pos2 = [i, j] # 직사각형의 끝 지점 저장
+change = True # 긁었는지 여부를 확인하는 변수
+while(change = True) :
+    change = False
+    for i in range(x) :
+        for j in range(y) :
+            if(arr[i][j]!=0):
+                pos1 = (i, j) # 최초로 0이 아닌 지점 저장
+                for l in range(j, y):
+                    k1 = -1
+                    if(k1 == -1):
+                        for k in range(i, x) :
+                            if(arr[k][l]==0) :
+                                k1 = k-1
+                            else:
+                                arr[k][l] = 0
+                    
+                    if(arr[k1][l]==0) :
+                        pos2 = (k1, l-1) # 직사각형의 끝 지점 저장
+                        change = True
+                    break # for 탈출
