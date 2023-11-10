@@ -33,7 +33,7 @@ class Map:
     def regionDensity(self, regionID):
         popul = self.reigonsPopulation[regionID]
         area = (self.reigons[regionID].end[0] - self.reigons[regionID].start[0])*(self.reigons[regionID].end[1] - self.reigons[regionID].start[1])
-        return (popul / area)*100
+        return (popul / area)
     
     def addEntityReigon(self, astar, entities):
         for i in self.reigons.keys():

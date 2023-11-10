@@ -29,7 +29,11 @@ astar = aStar(map)
 
 #엔티티 생성
 
+<<<<<<< HEAD
 n = 1
+=======
+n = 600
+>>>>>>> a36e1412a73d5acb74b0eab6d68ac6d060529912
 
 
 e1 = [Entity(size=0.2) for i in range(n)]
@@ -117,6 +121,7 @@ def fire(event):
 
 
 firebtn = dr.makeBtn("재난 발생", btnChange)
+modebtn = dr.makeBtn("흐름 모드", btnChange)
 
 
 
@@ -141,18 +146,10 @@ while 1:
     #구역 표시하기
     for i in map.reigons.keys():
         d = map.regionDensity(i)
-        print(d)
-        if d < 10:
-            dr.DrawRectangle(map.reigons[i].start * 10, map.reigons[i].end * 10, 'blue')
-        elif 10 <= d and d < 40:
-            dr.DrawRectangle(map.reigons[i].start * 10, map.reigons[i].end * 10, 'green')
-        elif 40 <= d and d < 70:
-            dr.DrawRectangle(map.reigons[i].start * 10, map.reigons[i].end * 10, 'yellow')
-        else:
-            dr.DrawRectangle(map.reigons[i].start * 10, map.reigons[i].end * 10, 'red')
-        dr.DrawCircle(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])* 10, 10, 'red')
-        for j in map.reigons[i].linkeds:
-            dr.DrawLine(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])*10, np.array([j[0], j[1]])*10, 'red')
+        dr.DrawRectangle(map.reigons[i].start * 10, map.reigons[i].end * 10, dr._from_rgb(255, 255 - d*400, 255 - d*400))
+        #dr.DrawCircle(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])* 10, 10, 'red')
+        #for j in map.reigons[i].linkeds:
+        #    dr.DrawLine(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])*10, np.array([j[0], j[1]])*10, 'red')
 
     #엔티티 그리기
     for i in range(len(Entities)):
@@ -171,11 +168,11 @@ while 1:
         #dr.DrawCircle(Entities[i].tempDestination * 10, Entities[i].size * 40, Entities[i].color)
 
         #Astar 경로 표시
-        for j in range(len(e1[0].tempDests) - 1):
-            dr.DrawLine(np.array([e1[0].tempDests[j][0], e1[0].tempDests[j][1]])*10, np.array([e1[0].tempDests[j+1][0], e1[0].tempDests[j+1][1]])*10, 'green')
+        #for j in range(len(e1[0].tempDests) - 1):
+        #    dr.DrawLine(np.array([e1[0].tempDests[j][0], e1[0].tempDests[j][1]])*10, np.array([e1[0].tempDests[j+1][0], e1[0].tempDests[j+1][1]])*10, 'black')
 
-        for j in range(len(e1[0].sq) - 1):
-            dr.DrawLine(np.array([e1[0].sq[j][0], e1[0].sq[j][1]])*10, np.array([e1[0].sq[j+1][0], e1[0].sq[j+1][1]])*10, 'blue')
+        #for j in range(len(e1[0].sq) - 1):
+        #    dr.DrawLine(np.array([e1[0].sq[j][0], e1[0].sq[j][1]])*10, np.array([e1[0].sq[j+1][0], e1[0].sq[j+1][1]])*10, 'black')
 
 
     #dr.window.title(str(1/dt))
