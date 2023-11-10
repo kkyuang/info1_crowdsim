@@ -1,6 +1,5 @@
 from PIL import Image
 
-
 im = Image.open("image/test.png")
 
 im.show()
@@ -32,8 +31,20 @@ for i in range(x) :
         r=0
         g=0
         b=0
-            
+                    
 for i in range(x) :
     for j in range(y) :
         print(arr[i][j],end=" ")
     print()
+
+# for i in range(x) :
+#     for j in range(y) :
+#         if(arr[i][j]!=0):
+#             pos1 = [i, j] # 최초로 0이 아닌 지점
+#             j += 1 # 가로로 긁기
+#             if(arr[i][j]==0) :
+#                 j -= 1 # j가 현재 0에 있으므로 1 빼기
+#                 if(arr[i][j]!=0) :
+#                     i+=1 # 세로로 긁기
+
+#             pos2 = [i, j]
