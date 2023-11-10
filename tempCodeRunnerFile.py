@@ -1,1 +1,2 @@
-disappear
+
+            i.state = 'fire'

@@ -29,7 +29,7 @@ astar = aStar(map)
 
 #엔티티 생성
 
-n = 3
+n = 300
 
 
 e1 = [Entity(size=0.2) for i in range(n)]
@@ -104,7 +104,7 @@ def btnChange():
 def fire(event):
     if True:
         mousepos = dr.mousePos()
-        for i in e1 + e2:
+        for i in Entities:
             i.destination = np.array([mousepos[0], mousepos[1]])
             i.startedPos = i.position
             i.sq = astar.findRoute(i.startedPos, i.destination)
@@ -127,7 +127,7 @@ def setMode():
     modebtn.config(text=ModeBtnName[Mode])
 
     #모드 설정
-    for i in e1 + e2:
+    for i in Entities:
         i.mode = Mode
     
 
@@ -155,7 +155,7 @@ while 1:
     #print(map.reigons.keys())
 
     #구역별 인구수 더하기
-    map.addEntityReigon(astar, e1 + e2)
+    map.addEntityReigon(astar, Entities)
 
     #구역 표시하기
     for i in map.reigons.keys():
@@ -188,6 +188,12 @@ while 1:
         for j in range(len(e1[0].sq) - 1):
             dr.DrawLine(np.array([e1[0].sq[j][0], e1[0].sq[j][1]])*10, np.array([e1[0].sq[j+1][0], e1[0].sq[j+1][1]])*10, 'black')
 
+    #삭제되어야 할 것은 삭제
+    k = 0
+    while k < len(Entities):
+        if Entities[k].willbeDisappear:
+            Entities.pop(k)
+        k+=1
 
     #dr.window.title(str(1/dt))
 
