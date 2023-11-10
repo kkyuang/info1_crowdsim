@@ -182,11 +182,11 @@ while 1:
         #dr.DrawCircle(Entities[i].tempDestination * 10, Entities[i].size * 40, Entities[i].color)
 
         #Astar 경로 표시
-        for j in range(len(e1[0].tempDests) - 1):
-            dr.DrawLine(np.array([e1[0].tempDests[j][0], e1[0].tempDests[j][1]])*10, np.array([e1[0].tempDests[j+1][0], e1[0].tempDests[j+1][1]])*10, 'black')
+        #for j in range(len(e1[0].tempDests) - 1):
+        #    dr.DrawLine(np.array([e1[0].tempDests[j][0], e1[0].tempDests[j][1]])*10, np.array([e1[0].tempDests[j+1][0], e1[0].tempDests[j+1][1]])*10, 'black')
 
-        for j in range(len(e1[0].sq) - 1):
-            dr.DrawLine(np.array([e1[0].sq[j][0], e1[0].sq[j][1]])*10, np.array([e1[0].sq[j+1][0], e1[0].sq[j+1][1]])*10, 'black')
+        #for j in range(len(e1[0].sq) - 1):
+        #    dr.DrawLine(np.array([e1[0].sq[j][0], e1[0].sq[j][1]])*10, np.array([e1[0].sq[j+1][0], e1[0].sq[j+1][1]])*10, 'black')
 
     #삭제되어야 할 것은 삭제
     k = 0
