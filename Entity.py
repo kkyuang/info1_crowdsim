@@ -20,6 +20,9 @@ class Entity:
         #self.destination = self.randomDestination(np.array([0, 0]), np.array([64, 48]), map)
         self.destination = 0
         self.state = 'normal'
+        self.mode = 'current'
+
+        self.isMoving = True
 
         self.randomnoise = np.array([random.random(), random.random()])
 
@@ -64,27 +67,51 @@ class Entity:
             dest = np.array([random.uniform(rangestart[0], rangeend[0]), random.uniform(rangestart[1], rangeend[1])])
             if astar.isinReigon(dest, map):
                 return dest
+            
+    #삭제시
+    def __del__(self):
+        print('deleted')
 
     def move(self, dt, map: Map, astar: aStar):
         velocity = np.array([0, 0])
 
         ##일반적 배회 상태 알고리즘
         if True:
-
-            if np.linalg.norm(self.destination - self.position) < self.speed or self.tempDests == 0:
+            #최초 생성시
+            if self.tempDests == 0:
+                #위치 범위 내에서 랜덤으로 설정
                 self.position = self.randomDestination(self.spawnRangeStart, self.spawnRangeEnd, map, astar)
-
-                if self.state == 'normal':
-                    self.destination = self.randomDestination(self.destRangeStart, self.destRangeEnd, map, astar)
-                elif self.state == 'fire':
-                    self.destination = self.destinations[self.state]
-                 
                 self.startedPos = self.position
 
+                #경로 찾기
                 self.sq = astar.findRoute(self.startedPos, self.destination)
                 self.tempDests = astar.routeToRandom(map, self.sq)
                 self.nowTempDest = 0
 
+            elif np.linalg.norm(self.destination - self.position) < self.speed:
+                if self.mode == 'roaming':
+                    self.position = self.randomDestination(self.spawnRangeStart, self.spawnRangeEnd, map, astar)
+                    self.destination = self.randomDestination(self.destRangeStart, self.destRangeEnd, map, astar)
+                elif self.mode == 'current':
+                    self.position = self.randomDestination(self.spawnRangeStart, self.spawnRangeEnd, map, astar)
+                    self.destination = self.destinations[self.state]
+                elif self.mode == 'disappear':
+                    del self
+                if self.mode == 'stop':
+                    self.isMoving = False
+                else:
+                    self.isMoving = True
+
+                self.startedPos = self.position
+
+                #경로 찾기
+                self.sq = astar.findRoute(self.startedPos, self.destination)
+                self.tempDests = astar.routeToRandom(map, self.sq)
+                self.nowTempDest = 0
+
+
+            if not self.isMoving:
+                return
 
             #목적지 접근 시 목적지 변경
             if np.linalg.norm(self.tempDests[self.nowTempDest] - self.position) < 2:
