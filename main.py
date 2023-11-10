@@ -9,7 +9,7 @@ from aStar import aStar
 
 #맵 생성
 
-map = Map(np.array([70, 50]))
+map = Map(np.array([80, 60]))
 
 map.makeWall(np.array([25, 0]), np.array([28, 20]))
 map.makeWall(np.array([20, 20]), np.array([35, 23]))
@@ -18,6 +18,8 @@ map.makeWall(np.array([20, 32]), np.array([35, 35]))
 map.makeWall(np.array([0, 45]), np.array([64, 48]))
 map.makeWall(np.array([5, 32]), np.array([8, 48]))
 map.makeWall(np.array([47, 32]), np.array([50, 48]))
+map.makeWall(np.array([0, 50]), np.array([64, 53]))
+map.makeWall(np.array([68, 0]), np.array([70, 55]))
 
 map.makeregion()
 
