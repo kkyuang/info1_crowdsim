@@ -23,13 +23,17 @@ class Map:
         self.grid = [[0 for i in range(size[1])] for i in range(size[0])]
         self.walls = []
         self.reigons = {}
+        self.reigonsPopulation = {}
         self.vertical_lines = []
         self.horizontal_lines = []
 
     def getReigonID(self, start, end):
         return ((start[0] + end[0])/2, (start[1] + end[1])/2)
 
-    
+    def regionDensity(self, regionID):
+        popul = self.reigonsPopulation[regionID]
+        area = (self.reigons[regionID].end[0] - self.reigons[regionID].start[0])*(self.reigons[regionID].end[1] - self.reigons[regionID].start[1])
+        return (popul / area)*100
         
     def makeWall(self, start, end):
         for i in range(start[0], end[0]):
@@ -123,8 +127,9 @@ class Map:
 
                             
                             self.reigons[reg.id].linkeds.append(reg1.id)
+                            self.reigonsPopulation[reg.id] = 0
 
-                                
+        
 
                  
                 
