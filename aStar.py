@@ -102,7 +102,7 @@ class aStar:
                         continue
                     g[child] = g[currentNode] + self.distReigon(currentNode, child)
                     h[child] = self.distReigon(child, destReigon)
-                    f[child] = g[child] + h[child]
+                    f[child] = g[child] + h[child] + self.map.regionDensity(child)
                     if len([openNode for openNode in openLists 
                            if child == openNode and g[child] > g[openNode]]) > 0:
                         continue
@@ -130,6 +130,7 @@ class aStar:
 
             
             sequence.reverse()
+            self.routes[(startRegion, destReigon)] = sequence
             return sequence
         
     #구역 내 임의 목표 목록으로 변환하는 함수

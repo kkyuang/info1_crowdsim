@@ -34,6 +34,14 @@ class Map:
         popul = self.reigonsPopulation[regionID]
         area = (self.reigons[regionID].end[0] - self.reigons[regionID].start[0])*(self.reigons[regionID].end[1] - self.reigons[regionID].start[1])
         return (popul / area)*100
+    
+    def addEntityReigon(self, astar, entities):
+        for i in self.reigons.keys():
+            self.reigonsPopulation[i] = 0
+
+        for i in entities:
+            if astar.getReigon(i.position) in self.reigons.keys():
+                self.reigonsPopulation[astar.getReigon(i.position)] += 1
         
     def makeWall(self, start, end):
         for i in range(start[0], end[0]):

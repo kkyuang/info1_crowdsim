@@ -29,7 +29,7 @@ astar = aStar(map)
 
 #엔티티 생성
 
-n = 100
+n = 30
 
 
 e1 = [Entity(size=0.2) for i in range(n)]
@@ -145,6 +145,9 @@ while 1:
     
     #print(map.reigons.keys())
 
+    #구역별 인구수 더하기
+    map.addEntityReigon(astar, e1 + e2)
+
     #구역 표시하기
     for i in map.reigons.keys():
         d = map.regionDensity(i)
@@ -155,7 +158,7 @@ while 1:
             dr.DrawRectangle(map.reigons[i].start * 10, map.reigons[i].end * 10, 'green')
         elif 40 <= d and d < 70:
             dr.DrawRectangle(map.reigons[i].start * 10, map.reigons[i].end * 10, 'yellow')
-        elif 100 <= d:
+        else:
             dr.DrawRectangle(map.reigons[i].start * 10, map.reigons[i].end * 10, 'red')
         dr.DrawCircle(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])* 10, 10, 'red')
         for j in map.reigons[i].linkeds:
