@@ -6,8 +6,9 @@ from tkinter import filedialog
 # 시작 함수
 def start():
     print("start")
-    os.system("python main.py")
     window.destroy()
+    os.system("python main.py")
+
 
 # 파일을 불러오는 함수
 def fileload():

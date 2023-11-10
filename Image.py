@@ -1,7 +1,7 @@
 from PIL import Image
 
 
-im = Image.open("goose.jpg")
+im = Image.open("image/test.png")
 
 im.show()
 
@@ -20,18 +20,20 @@ arr = [[0 for j in range(y)] for i in range(x)]
 
 for i in range(x) :
     for j in range(y) :
-        r, g, b = rgb_im.getpixel((j, i))
+        r, g, b = rgb_im.getpixel((i, j))
 
         print(r, g, b)
-        if r==0 & g==0 & b==0 :
-            arr[j][i]=1
-        else : 
-            arr[j][i]=0
+        if r==0 and g==0 and b==0 :
+            arr[i][j]=1
+        elif r==0 and g==255 and b==0 : 
+            arr[i][j]=2
+        else :
+            arr[i][j]=0
         r=0
         g=0
         b=0
             
 for i in range(x) :
     for j in range(y) :
-        print(arr[j][i],end=" ")
+        print(arr[i][j],end=" ")
     print()
