@@ -106,7 +106,7 @@ def btnChange():
 def fire(event):
     if True:
         mousepos = dr.mousePos()
-        for i in e1:
+        for i in e1 + e2:
             i.destination = np.array([mousepos[0], mousepos[1]])
             i.startedPos = i.position
             i.sq = astar.findRoute(i.startedPos, i.destination)
@@ -114,16 +114,6 @@ def fire(event):
             i.nowTempDest = 0
             i.state = 'fire'
             i.destinations['fire'] = np.array([mousepos[0], mousepos[1]])
-            map.reigonsPopulation[astar.getReigon(i.position)] += 1
-        for i in e2:
-            i.destination = np.array([mousepos[0], mousepos[1]])
-            i.startedPos = i.position
-            i.sq = astar.findRoute(i.startedPos, i.destination)
-            i.tempDests = astar.routeToRandom(map, i.sq)
-            i.nowTempDest = 0
-            i.state = 'fire'
-            i.destinations['fire'] = np.array([mousepos[0], mousepos[1]])
-            map.reigonsPopulation[astar.getReigon(i.position)] += 1
 
 
 firebtn = dr.makeBtn("재난 발생", btnChange)
