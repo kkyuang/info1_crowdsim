@@ -1,7 +1,7 @@
 from PIL import Image
 import pickle
 
-im = Image.open("image/subway.bmp")
+im = Image.open("image/temp.bmp")
 
 print(im.size)
 

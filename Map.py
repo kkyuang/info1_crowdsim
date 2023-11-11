@@ -7,6 +7,13 @@ class Wall:
         self.start = start
         self.end = end
 
+class Shelter:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+        self.id = ((start[0] + end[0]) / 2, (start[1] + end[1]) / 2)
+
+
 class Reigon:
     def __init__(self, start, end):
         self.start = start
@@ -22,6 +29,7 @@ class Map:
         #size 크기의 그리드 맵 생성(0: 빈공간, Entitiy: 개체, 1: 장애물)
         self.grid = [[0 for i in range(size[1])] for i in range(size[0])]
         self.walls = []
+        self.shelters = []
         self.reigons = {}
         self.reigonsPopulation = {}
         self.vertical_lines = []
@@ -49,6 +57,12 @@ class Map:
                 self.grid[i][j] = 1
         self.walls.append(Wall(start, end))
 
+    def makeShelter(self, start, end):
+        for i in range(start[0], end[0]):
+            for j in range(start[1], end[1]):
+                self.grid[i][j] = 2
+        self.shelters.append(Shelter(start, end))
+
     def makeregion(self):
         #장애물으로 인해 만들어진 가로세로 직선들
         vertical_lines = []
@@ -61,6 +75,14 @@ class Map:
             #시점, 종점의 y좌표 -> 가로선
             horizontal_lines.append(self.walls[i].start[1])
             horizontal_lines.append(self.walls[i].end[1])
+
+        for i in range(len(self.shelters)):
+            #시점, 종점의 x좌표 -> 세로선
+            vertical_lines.append(self.shelters[i].start[0])
+            vertical_lines.append(self.shelters[i].end[0])
+            #시점, 종점의 y좌표 -> 가로선
+            horizontal_lines.append(self.shelters[i].start[1])
+            horizontal_lines.append(self.shelters[i].end[1])
 
         #끝, 처음 추가 
         vertical_lines.append(0)
@@ -81,9 +103,6 @@ class Map:
         self.vertical_lines = vertical_lines
         self.horizontal_lines = horizontal_lines
 
-
-        print(vertical_lines)
-        print(horizontal_lines)
 
         #구역 나누기
         for i in range(len(vertical_lines) - 1):
@@ -124,8 +143,6 @@ class Map:
                         #연결할 구역의 ID
                         start1 = np.array([vertical_lines[i + directionx[k]], horizontal_lines[j + directiony[k]]])
                         end1 = np.array([vertical_lines[i + 1 + directionx[k]], horizontal_lines[j + 1 + directiony[k]]])
-                        if vertical_lines[i] == 0 and horizontal_lines[j] == 35:
-                            print(start1, end1)
                         #연결할 구역이 장애물이 아니여야 함
                         if self.grid[math.floor((start1[0] + end1[0]) / 2)][math.floor((start1[1] + end1[1]) / 2)] != 1 and self.getReigonID(start1, end1) in self.reigons :
                             if start[0] < end[0]:

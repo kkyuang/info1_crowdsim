@@ -18,18 +18,8 @@ map = Map(np.array([MapElements['size'][0], MapElements['size'][1]]))
 
 for i in MapElements[1]:
     map.makeWall(np.array([i[0][0], i[0][1]]), np.array([i[1][0], i[1][1]]))
-
-
-#map.makeWall(np.array([10, 0]), np.array([11, 5]))
-#map.makeWall(np.array([12, 0]), np.array([14, 10]))
-#map.makeWall(np.array([10, 10]), np.array([17, 11]))
-#map.makeWall(np.array([10, 16]), np.array([17, 17]))
-#map.makeWall(np.array([25, 32]), np.array([28, 48]))
-#map.makeWall(np.array([0, 22]), np.array([32, 24]))
-#map.makeWall(np.array([2, 16]), np.array([4, 24]))
-#map.makeWall(np.array([24, 16]), np.array([25, 24]))
-#map.makeWall(np.array([0, 25]), np.array([32, 26]))
-#map.makeWall(np.array([34, 0]), np.array([35, 22]))
+for i in MapElements[2]:
+    map.makeShelter(np.array([i[0][0], i[0][1]]), np.array([i[1][0], i[1][1]]))
 
 map.makeregion()
 
@@ -37,35 +27,30 @@ map.makeregion()
 astar = aStar(map)
  
 
-#엔티티 생성
+#전체 엔티티 목록
+Entities = []
 
-n = 100
+#군중 그룹 생성
+n = int(input("군중 그룹의 수를 입력해주세요. : "))
+for k in range(1, n + 1):
+    print("\n\n군중 그룹 " + str(k) + "번을 생성하겠습니다.")
+    popul = int(input("군중 그룹 " + str(k) + "의 인구수를 입력해주세요. : "))
+    startR = int(input("군중 그룹 " + str(k) + "의 시작 구역을 입력해주세요. (3, 4, 5, 6) : "))
+    destR = int(input("군중 그룹 " + str(k) + "의 목적 구역을 입력해주세요. (3, 4, 5, 6) : "))
+    color = input("군중 그룹 " + str(k) + "의 색을 입력해주세요. : ")
 
+    e1 = [Entity(size=0.2) for i in range(popul)]
+    for i in e1:
+        i.setDestRange(np.array([MapElements[startR][0][0][0], MapElements[startR][0][0][1]]), np.array([MapElements[startR][0][1][0], MapElements[startR][0][1][1]]))
+        i.setSpawnRange(np.array([MapElements[destR][0][0][0], MapElements[destR][0][0][1]]), np.array([MapElements[destR][0][1][0], MapElements[destR][0][1][1]]))
 
-e1 = [Entity(size=0.2) for i in range(n)]
-for i in e1:
-    i.setDestRange(np.array([MapElements[3][0][0][0], MapElements[3][0][0][1]]), np.array([MapElements[3][0][1][0], MapElements[3][0][1][1]]))
-    i.setSpawnRange(np.array([MapElements[4][0][0][0], MapElements[4][0][0][1]]), np.array([MapElements[4][0][1][0], MapElements[4][0][1][1]]))
+        i.position = i.randomDestination(i.spawnRangeStart, i.spawnRangeEnd, map, astar)
+        map.reigonsPopulation[astar.getReigon(i.position)] += 1
 
-    i.position = i.randomDestination(i.spawnRangeStart, i.spawnRangeEnd, map, astar)
-    map.reigonsPopulation[astar.getReigon(i.position)] += 1
+        i.destination = i.randomDestination(i.destRangeStart, i.destRangeEnd, map, astar)
+        i.normalColor = color
 
-    i.destination = i.randomDestination(i.destRangeStart, i.destRangeEnd, map, astar)
-    i.normalColor = 'blue'
-
-e2 = [Entity(size=0.2) for i in range(n)]
-for i in e2:
-    i.setDestRange(np.array([MapElements[5][0][0][0], MapElements[5][0][0][1]]), np.array([MapElements[5][0][1][0], MapElements[5][0][1][1]]))
-    i.setSpawnRange(np.array([MapElements[6][0][0][0], MapElements[6][0][0][1]]), np.array([MapElements[6][0][1][0], MapElements[6][0][1][1]]))
-
-
-    i.position = i.randomDestination(i.spawnRangeStart, i.spawnRangeEnd, map, astar)
-    map.reigonsPopulation[astar.getReigon(i.position)] += 1
-
-    i.destination = i.randomDestination(i.destRangeStart, i.destRangeEnd, map, astar)
-    i.normalColor = 'purple'
-
-Entities = e1 + e2
+    Entities += e1
 
 
 screenSize = np.array([700, 600])
@@ -119,6 +104,8 @@ def setMode():
 isFire = False
 
 firebtn = dr.makeBtn("목적지 설정", btnChange)
+firebtn = dr.makeBtn("개인별 대피", btnChange)
+firebtn = dr.makeBtn("중앙 통제 대피", btnChange)
 modebtn = dr.makeBtn("흐름 모드", setMode)
 
 
@@ -134,6 +121,7 @@ while 1:
     dr.coordinateText(DPscale)
     ##메인 프로그램 작성
 
+    #벽 그리기
     for i in range(len(map.walls)):
         dr.DrawRectangle(map.walls[i].start * DPscale, map.walls[i].end * DPscale, 'black')
     
@@ -144,14 +132,21 @@ while 1:
 
     #구역 표시하기
     for i in map.reigons.keys():
+            
         d = map.regionDensity(i)
         #print(d)
         dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, dr._from_rgb(255, 255 - d*20, 255 - d*20))
         
+            
         #디버그용
         #dr.DrawCircle(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])* DPscale, DPscale / 10, 'red')
         #for j in map.reigons[i].linkeds:
         #    dr.DrawLine(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])*DPscale, np.array([j[0], j[1]])*DPscale, 'red')
+
+    #대피소 그리기
+    for i in range(len(map.shelters)):
+        dr.DrawRectangle(map.shelters[i].start * DPscale, map.shelters[i].end * DPscale, '#00ff00')
+
 
     #엔티티 그리기
     for i in range(len(Entities)):
