@@ -69,7 +69,7 @@ class aStar:
         f[startRegion] = h[startRegion]
 
         if not (startRegion in self.map.reigons.keys()):
-            pass
+            return [destReigon]
 
         #저장된 경로에 존재할 경우
         if (startRegion, destReigon) in self.routes:

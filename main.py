@@ -39,13 +39,13 @@ astar = aStar(map)
 
 #엔티티 생성
 
-n = 3000
+n = 100
 
 
 e1 = [Entity(size=0.2) for i in range(n)]
 for i in e1:
-    i.setDestRange(np.array([1, 54]), np.array([119, 66]))
-    i.setSpawnRange(np.array([1, 8]), np.array([130, 13]))
+    i.setDestRange(np.array([MapElements[3][0][0][0], MapElements[3][0][0][1]]), np.array([MapElements[3][0][1][0], MapElements[3][0][1][1]]))
+    i.setSpawnRange(np.array([MapElements[4][0][0][0], MapElements[4][0][0][1]]), np.array([MapElements[4][0][1][0], MapElements[4][0][1][1]]))
 
     i.position = i.randomDestination(i.spawnRangeStart, i.spawnRangeEnd, map, astar)
     map.reigonsPopulation[astar.getReigon(i.position)] += 1
@@ -55,8 +55,8 @@ for i in e1:
 
 e2 = [Entity(size=0.2) for i in range(n)]
 for i in e2:
-    i.setDestRange(np.array([1, 8]), np.array([130, 13]))
-    i.setSpawnRange(np.array([1, 54]), np.array([119, 66]))
+    i.setDestRange(np.array([MapElements[5][0][0][0], MapElements[5][0][0][1]]), np.array([MapElements[5][0][1][0], MapElements[5][0][1][1]]))
+    i.setSpawnRange(np.array([MapElements[6][0][0][0], MapElements[6][0][0][1]]), np.array([MapElements[6][0][1][0], MapElements[6][0][1][1]]))
 
 
     i.position = i.randomDestination(i.spawnRangeStart, i.spawnRangeEnd, map, astar)
