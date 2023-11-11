@@ -129,6 +129,7 @@ class Entity:
 
 
             #목적지 접근 시 목적지 변경
+            #print(self.tempDests)
             if np.linalg.norm(self.tempDests[self.nowTempDest] - self.position) < 2:
                 if self.nowTempDest < len(self.tempDests) - 1:
                     self.nowTempDest += 1
@@ -149,8 +150,10 @@ class Entity:
             velocity = direction * self.speed
             
         self.nowReigon = astar.getReigon(self.position)
+
+        #군중의 이동속도 정하기
         if self.nowReigon in map.reigons.keys():
-            self.speed = 3/(1 + (map.regionDensity(self.nowReigon)))
+            self.speed = 1.5/(1 + (map.regionDensity(self.nowReigon)))
         else:
             self.speed = 3/(1)
         #목적지 방향으로 미소거리 더하기

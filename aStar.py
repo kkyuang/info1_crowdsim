@@ -117,6 +117,8 @@ class aStar:
 
             #목적지의 부모가 정해지지 않으면?
             if not(destReigon in closed_motherNode):
+                print(startRegion)
+                print(destination)
                 return 'error'
 
             sequence = [destReigon]

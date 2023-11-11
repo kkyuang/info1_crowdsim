@@ -1,2 +1,1 @@
-
-            i.state = 'fire'
+10
