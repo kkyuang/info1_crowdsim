@@ -15,10 +15,17 @@ class Drawer:
         self.window.geometry(str(screensize[0]) + "x" + str(screensize[1]) + "+100+100")
         self.window.resizable(True, True)# 버튼 만들기 + 옵션 설정
 
+        self.btnframe = tkinter.Frame(self.window)
+        self.canvasFrame= tkinter.Frame(self.window)
+        self.textFrame= tkinter.Frame(self.btnframe)
+        self.btnframe.pack(side="top")
+        self.textFrame.pack(side="bottom")
+        self.canvasFrame.pack(side="bottom")
 
         #캔버스 정의
-        self.canvas = tkinter.Canvas(self.window, width=screensize[0], height=screensize[1], bd=2)
-        self.position_label = tkinter.Label(self.window, text="마우스 좌표:")
+        self.canvas = tkinter.Canvas(self.canvasFrame, width=screensize[0], height=screensize[1], bd=2)
+        self.position_label = tkinter.Label(self.textFrame, text="마우스 좌표:")
+
     def _from_rgb(self, r, g, b):
         """translates an rgb tuple of int to a tkinter friendly color code
         """
@@ -38,7 +45,7 @@ class Drawer:
     #버튼 생성
     def makeBtn(self, label, cmd):
 
-        btn = tkinter.Button(self.window,
+        btn = tkinter.Button(self.btnframe,
         text = label,
         background = 'white')
  
@@ -46,7 +53,7 @@ class Drawer:
         btn.config(width = 5, height = 2, command=cmd)
  
         # 버튼 배치하기
-        btn.pack()
+        btn.pack(side="left")
 
         return btn
     
