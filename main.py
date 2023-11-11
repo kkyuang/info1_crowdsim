@@ -6,21 +6,30 @@ import time
 import numpy as np
 import math
 from aStar import aStar
+import pickle
 
 #맵 생성
 
-map = Map(np.array([40, 30]))
+MapElements = {}
+with open('MapTemp',"rb") as fr:
+    MapElements = pickle.load(fr)
+    
+map = Map(np.array([MapElements['size'][0], MapElements['size'][1]]))
 
-map.makeWall(np.array([10, 0]), np.array([11, 5]))
-map.makeWall(np.array([12, 0]), np.array([14, 10]))
-map.makeWall(np.array([10, 10]), np.array([17, 11]))
-map.makeWall(np.array([10, 16]), np.array([17, 17]))
+for i in MapElements[1]:
+    map.makeWall(np.array([i[0][0], i[0][1]]), np.array([i[1][0], i[1][1]]))
+
+
+#map.makeWall(np.array([10, 0]), np.array([11, 5]))
+#map.makeWall(np.array([12, 0]), np.array([14, 10]))
+#map.makeWall(np.array([10, 10]), np.array([17, 11]))
+#map.makeWall(np.array([10, 16]), np.array([17, 17]))
 #map.makeWall(np.array([25, 32]), np.array([28, 48]))
-map.makeWall(np.array([0, 22]), np.array([32, 24]))
-map.makeWall(np.array([2, 16]), np.array([4, 24]))
-map.makeWall(np.array([24, 16]), np.array([25, 24]))
-map.makeWall(np.array([0, 25]), np.array([32, 26]))
-map.makeWall(np.array([34, 0]), np.array([35, 22]))
+#map.makeWall(np.array([0, 22]), np.array([32, 24]))
+#map.makeWall(np.array([2, 16]), np.array([4, 24]))
+#map.makeWall(np.array([24, 16]), np.array([25, 24]))
+#map.makeWall(np.array([0, 25]), np.array([32, 26]))
+#map.makeWall(np.array([34, 0]), np.array([35, 22]))
 
 map.makeregion()
 
@@ -30,13 +39,13 @@ astar = aStar(map)
 
 #엔티티 생성
 
-n = 1000
+n = 3000
 
 
 e1 = [Entity(size=0.2) for i in range(n)]
 for i in e1:
-    i.setDestRange(np.array([22, 0]), np.array([32, 20]))
-    i.setSpawnRange(np.array([0, 0]), np.array([10, 20]))
+    i.setDestRange(np.array([1, 54]), np.array([119, 66]))
+    i.setSpawnRange(np.array([1, 8]), np.array([130, 13]))
 
     i.position = i.randomDestination(i.spawnRangeStart, i.spawnRangeEnd, map, astar)
     map.reigonsPopulation[astar.getReigon(i.position)] += 1
@@ -46,8 +55,8 @@ for i in e1:
 
 e2 = [Entity(size=0.2) for i in range(n)]
 for i in e2:
-    i.setDestRange(np.array([0, 0]), np.array([10, 20]))
-    i.setSpawnRange(np.array([22, 0]), np.array([32, 20]))
+    i.setDestRange(np.array([1, 8]), np.array([130, 13]))
+    i.setSpawnRange(np.array([1, 54]), np.array([119, 66]))
 
 
     i.position = i.randomDestination(i.spawnRangeStart, i.spawnRangeEnd, map, astar)
@@ -136,7 +145,7 @@ while 1:
     #구역 표시하기
     for i in map.reigons.keys():
         d = map.regionDensity(i)
-        print(d)
+        #print(d)
         dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, dr._from_rgb(255, 255 - d*20, 255 - d*20))
         
         #디버그용
