@@ -38,22 +38,24 @@ for i in range(x) :
     print()
 
 change = True # 긁었는지 여부를 확인하는 변수
-while(change = True) :
+while(change == True) :
     change = False
     for i in range(x) :
         for j in range(y) :
             if(arr[i][j]!=0):
                 pos1 = (i, j) # 최초로 0이 아닌 지점 저장
-                for l in range(j, y):
-                    k1 = -1
-                    if(k1 == -1):
-                        for k in range(i, x) :
+                for l in range(j, y): # 옆(j)으로 긁기
+                    temp = -1
+                    if(temp == -1):
+                        for k in range(i, x) : #아래(i)로 긁기
                             if(arr[k][l]==0) :
-                                k1 = k-1
+                                temp = k-1
+                                pos2 = (temp, l)
                             else:
                                 arr[k][l] = 0
+                                change = True
                     
                     if(arr[k1][l]==0) :
-                        pos2 = (k1, l-1) # 직사각형의 끝 지점 저장
+                        pos2 = (temp, l-1) # 직사각형의 끝 지점 저장
                         change = True
                     break # for 탈출

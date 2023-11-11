@@ -12,9 +12,11 @@ def start():
 
 # 파일을 불러오는 함수
 def fileload():
+    global file
     file = filedialog.askopenfilenames(initialdir="/", title = "파일 불러오기", \
                                         filetypes = (("jpg 파일","*jpg"), ("png 파일","*png"), \
                                                      ("모든 파일", "*.*")))
+    label_image.config(image = file)
     label_info.config(text = file)
     if(file != ''):
         print("file loaded")
@@ -39,6 +41,10 @@ label_title.pack(side = "top")
 button_fileload = tkinter.Button(window, text = "파일 불러오기", overrelief = "solid", command = fileload, \
                         font = font_2)
 button_fileload.pack()
+
+# 파일 미리보기 라벨
+label_image = tkinter.Label(window)
+label_image.pack()
 
 # 파일 정보 라벨
 label_info = tkinter.Label(window, text = "None", font = font_2)

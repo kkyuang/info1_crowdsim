@@ -29,11 +29,7 @@ astar = aStar(map)
 
 #엔티티 생성
 
-<<<<<<< HEAD
-n = 100
-=======
 n = 3
->>>>>>> b6c9db426649d2adfdf8aed64b24dbe16032a48c
 
 
 e1 = [Entity(size=0.2) for i in range(n)]
