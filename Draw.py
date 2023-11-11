@@ -57,18 +57,18 @@ class Drawer:
     #마우스 좌표 획득
     def mousePos(self):
         x, y = self.canvas.winfo_pointerx() - self.canvas.winfo_rootx(), self.canvas.winfo_pointery()- self.canvas.winfo_rooty()
-        return (x/10, y/10)
+        return (x, y)
 
 
     #텍스트 좌표 안내
-    def coordinateText(self):
+    def coordinateText(self, DPscale):
         x, y = self.canvas.winfo_pointerx() - self.canvas.winfo_rootx(), self.canvas.winfo_pointery()- self.canvas.winfo_rooty()
-        self.position_label.config(text=f"현재 좌표: x={x/10}, y={y/10}")
+        self.position_label.config(text=f"현재 좌표: x={round(x/DPscale, 2)}, y={round(y/DPscale, 2)}")
         self.position_label.pack()
 
     #원 그리기
     def DrawCircle(self, center, radius, color):
-        self.canvas.create_oval(center[0] - radius/2, center[1] - radius/2,  center[0] + radius/2, center[1] + radius/2, fill=color)
+        self.canvas.create_oval(center[0] - radius, center[1] - radius,  center[0] + radius, center[1] + radius, fill=color)
         self.canvas.pack()
 
     def DrawRectangle(self, start, end, color):

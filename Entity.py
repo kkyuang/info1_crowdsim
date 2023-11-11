@@ -22,7 +22,11 @@ class Entity:
         self.state = 'normal'
         self.mode = 'current'
 
+        #'stop mode'에서 현재 움직이고 있는가 하는 상태를 나타냄
         self.isMoving = True
+
+        #'disappear mode'에서 이제 삭제되어야 하는가 하는 것을 나타냄
+        self.willbeDisappear = False
 
         self.randomnoise = np.array([random.random(), random.random()])
 
@@ -70,7 +74,8 @@ class Entity:
             
     #삭제시
     def __del__(self):
-        print('deleted')
+        #print('deleted')
+        pass
 
     def move(self, dt, map: Map, astar: aStar):
         velocity = np.array([0, 0])
@@ -89,31 +94,42 @@ class Entity:
                 self.nowTempDest = 0
 
             elif np.linalg.norm(self.destination - self.position) < self.speed:
+                #배회모드: 랜덤으로 목적지만 설정
                 if self.mode == 'roaming':
-                    self.position = self.randomDestination(self.spawnRangeStart, self.spawnRangeEnd, map, astar)
                     self.destination = self.randomDestination(self.destRangeStart, self.destRangeEnd, map, astar)
+                #흐름모드: 랜덤으로 목적지, 시작지점 다시 설정
                 elif self.mode == 'current':
                     self.position = self.randomDestination(self.spawnRangeStart, self.spawnRangeEnd, map, astar)
-                    self.destination = self.destinations[self.state]
+                    if self.state == 'fire':
+                        self.destination = self.destinations[self.state]
+                    else:
+                        self.destination = self.randomDestination(self.destRangeStart, self.destRangeEnd, map, astar)
+                #삭제모드: 도착시 아예 사라짐
                 elif self.mode == 'disappear':
-                    del self
+                    self.willbeDisappear = True
+                #중지모드: 도착시 움직임을 종료함
                 if self.mode == 'stop':
                     self.isMoving = False
                 else:
                     self.isMoving = True
 
+
                 self.startedPos = self.position
 
                 #경로 찾기
+                if (not self.isMoving) or self.willbeDisappear:
+                    return
+                
                 self.sq = astar.findRoute(self.startedPos, self.destination)
                 self.tempDests = astar.routeToRandom(map, self.sq)
                 self.nowTempDest = 0
 
-
-            if not self.isMoving:
+            if (not self.isMoving) or self.willbeDisappear:
                 return
 
+
             #목적지 접근 시 목적지 변경
+            #print(self.tempDests)
             if np.linalg.norm(self.tempDests[self.nowTempDest] - self.position) < 2:
                 if self.nowTempDest < len(self.tempDests) - 1:
                     self.nowTempDest += 1
@@ -134,8 +150,10 @@ class Entity:
             velocity = direction * self.speed
             
         self.nowReigon = astar.getReigon(self.position)
+
+        #군중의 이동속도 정하기
         if self.nowReigon in map.reigons.keys():
-            self.speed = 3/(1 + (map.regionDensity(self.nowReigon)))
+            self.speed = 1.5/(1 + (map.regionDensity(self.nowReigon)))
         else:
             self.speed = 3/(1)
         #목적지 방향으로 미소거리 더하기
