@@ -8,6 +8,9 @@ import math
 from aStar import aStar
 import pickle
 
+from matplotlib import pyplot as plt
+import pandas as pd
+
 #맵 생성
 
 MapElements = {}
@@ -41,8 +44,8 @@ for k in range(1, n + 1):
 
     e1 = [Entity(size=0.2) for i in range(popul)]
     for i in e1:
-        i.setDestRange(np.array([MapElements[startR][0][0][0], MapElements[startR][0][0][1]]), np.array([MapElements[startR][0][1][0], MapElements[startR][0][1][1]]))
-        i.setSpawnRange(np.array([MapElements[destR][0][0][0], MapElements[destR][0][0][1]]), np.array([MapElements[destR][0][1][0], MapElements[destR][0][1][1]]))
+        i.setSpawnRange(np.array([MapElements[startR][0][0][0], MapElements[startR][0][0][1]]), np.array([MapElements[startR][0][1][0], MapElements[startR][0][1][1]]))
+        i.setDestRange(np.array([MapElements[destR][0][0][0], MapElements[destR][0][0][1]]), np.array([MapElements[destR][0][1][0], MapElements[destR][0][1][1]]))
 
         i.position = i.randomDestination(i.spawnRangeStart, i.spawnRangeEnd, map, astar)
         map.reigonsPopulation[astar.getReigon(i.position)] += 1
@@ -71,7 +74,6 @@ def fire(event):
         mousepos = dr.mousePos()
         for i in Entities:
             i.destination = np.array([mousepos[0] / DPscale, mousepos[1] / DPscale])
-            print(i.destination)
             i.startedPos = i.position
             i.sq = astar.findRoute(i.startedPos, i.destination)
             i.tempDests = astar.routeToRandom(map, i.sq)
@@ -89,6 +91,13 @@ ModeTable = {"current": "disappear", "disappear": "stop", "stop": "roaming", "ro
 ModeBtnName = {"current": "흐름 모드", "disappear": "소멸 모드", "stop": "정지 모드", "roaming":"배회 모드"}
 
 
+ShelterMode = "normal" #기본적으로 대피소와 관계없음
+#모드 변경 순서
+ShelterModeTable = {"normal": "selffind", "selffind": "centralfind", "centralfind": "normal"}
+#모드 한국어
+ShelterModeBtnName = {"normal": "대피 X", "selffind": "개인별 대피", "centralfind": "중앙 통제 대피 "}
+
+
 #모드를 순회적으로 변경하는 함수
 def setMode():
     global Mode
@@ -98,17 +107,46 @@ def setMode():
     #모드 설정
     for i in Entities:
         i.mode = Mode
+
+def findShelter():
+    global ShelterMode
+    ShelterMode = ShelterModeTable[ShelterMode]
+    shelterbtn.config(text=ShelterModeBtnName[ShelterMode])
+
+    if ShelterMode == "selffind":
+        global isTimer
+        isTimer = True
+
+    #모드 설정
+    for i in Entities:
+        i.sheltermode = ShelterMode
+        if ShelterMode == "selffind":
+            i.destination = i.nearestShelter(i.position, map)
+            i.startedPos = i.position
+            i.sq = astar.findRoute(i.startedPos, i.destination)
+            i.tempDests = astar.routeToRandom(map, i.sq)
+            i.nowTempDest = 0
     
 
 #재난 발생 토글
 isFire = False
 
 firebtn = dr.makeBtn("목적지 설정", btnChange)
-firebtn = dr.makeBtn("개인별 대피", btnChange)
-firebtn = dr.makeBtn("중앙 통제 대피", btnChange)
+shelterbtn = dr.makeBtn("대피 X", findShelter)
 modebtn = dr.makeBtn("흐름 모드", setMode)
 
 
+
+#분석하기
+escapedCounts = [] #대피한 사람의 수
+escapedTimes = [] #시간 체크
+
+deathCount = 0 #사망자 수
+
+
+##타이머
+timer = 0
+isTimer = False
 
 
 
@@ -175,8 +213,34 @@ while 1:
     k = 0
     while k < len(Entities):
         if Entities[k].willbeDisappear:
+            if len(escapedCounts) == 0:
+                escapedCounts.append(1)
+            else:
+                escapedCounts.append(escapedCounts[len(escapedCounts) - 1] + 1)
+            escapedTimes.append(timer)
             Entities.pop(k)
         k+=1
+
+    #엔티티 모두 대피시
+    if len(Entities) == 0:
+        #데이터 생성
+        df1=pd.DataFrame({'X':escapedTimes,'Y':escapedCounts})
+
+        #그래프생성
+        plt.plot(df1['X'],df1['Y'],color='blue',linestyle='-',marker='o')
+
+        #그래프 정보 설정
+        plt.xlim(0, escapedTimes[len(escapedTimes) - 1]) #x축 범위
+        plt.ylim(0, escapedCounts[len(escapedCounts) - 1]) #y축 범위
+        plt.xlabel('time') #x 라벨
+        plt.ylabel('evacuee') #y 라벨
+        plt.title("evacuee count") #그래프 이름
+
+        #그래프 출력
+        plt.show()
+        break
+
+        
 
     #dr.window.title(str(1/dt))
 
@@ -186,4 +250,8 @@ while 1:
     #프레임 체크를 위한 루프의 마지막 시간
     endTime = time.time()
     dt = endTime - startTime
+
+    #타이머 작동시
+    if isTimer:
+        timer += dt
 
