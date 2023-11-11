@@ -21,6 +21,7 @@ class Entity:
         self.destination = 0
         self.state = 'normal'
         self.mode = 'current'
+        self.sheltermode = 'normal'
 
         #'stop mode'에서 현재 움직이고 있는가 하는 상태를 나타냄
         self.isMoving = True
@@ -72,6 +73,19 @@ class Entity:
             if astar.isinReigon(dest, map):
                 return dest
             
+    #가장 가까운 대피소 찾기
+    def nearestShelter(self, position, map:Map):
+        nearest = 0
+        neardist = float("inf")
+        for i in range(len(map.shelters)):
+            dist = norm(position, np.array([map.shelters[i].id[0], map.shelters[i].id[1]]))
+            if dist < neardist:
+                nearest = i
+                neardist = dist
+
+        return np.array([map.shelters[nearest].id[0], map.shelters[nearest].id[1]])
+        
+            
     #삭제시
     def __del__(self):
         #print('deleted')
@@ -104,6 +118,9 @@ class Entity:
                         self.destination = self.destinations[self.state]
                     else:
                         self.destination = self.randomDestination(self.destRangeStart, self.destRangeEnd, map, astar)
+                        
+                    if self.sheltermode == "selffind":
+                        self.destination = self.nearestShelter(self.position, map)
                 #삭제모드: 도착시 아예 사라짐
                 elif self.mode == 'disappear':
                     self.willbeDisappear = True
