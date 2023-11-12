@@ -13,7 +13,6 @@ class Shelter:
         self.end = end
         self.id = ((start[0] + end[0]) / 2, (start[1] + end[1]) / 2)
 
-
 class Reigon:
     def __init__(self, start, end):
         self.start = start
@@ -28,28 +27,39 @@ class Map:
         self.size = size
         #size 크기의 그리드 맵 생성(0: 빈공간, Entitiy: 개체, 1: 장애물)
         self.grid = [[0 for i in range(size[1])] for i in range(size[0])]
+        #장애물의 (시작, 끝) 튜플 배열
         self.walls = []
+        #대피소(출구)의
         self.shelters = []
+        #구역들
         self.reigons = {}
+        #구역에 따른 인구수
         self.reigonsPopulation = {}
+        #세로줄
         self.vertical_lines = []
+        #가로줄
         self.horizontal_lines = []
+
+        #구역에 따른 대피소 지도
+        self.shelterAssignMap = {}
+        self.shelterTempArr = []
+
 
     def getReigonID(self, start, end):
         return ((start[0] + end[0])/2, (start[1] + end[1])/2)
 
     def regionDensity(self, regionID):
-        popul = self.reigonsPopulation[regionID]
+        popul = len(self.reigonsPopulation[regionID])
         area = (self.reigons[regionID].end[0] - self.reigons[regionID].start[0])*(self.reigons[regionID].end[1] - self.reigons[regionID].start[1])
         return (popul / area)
     
     def addEntityReigon(self, astar, entities):
         for i in self.reigons.keys():
-            self.reigonsPopulation[i] = 0
+            self.reigonsPopulation[i] = []
 
         for i in entities:
             if astar.getReigon(i.position) in self.reigons.keys():
-                self.reigonsPopulation[astar.getReigon(i.position)] += 1
+                self.reigonsPopulation[astar.getReigon(i.position)].append(i)
         
     def makeWall(self, start, end):
         for i in range(start[0], end[0]):
@@ -62,6 +72,40 @@ class Map:
             for j in range(start[1], end[1]):
                 self.grid[i][j] = 2
         self.shelters.append(Shelter(start, end))
+
+
+    #현재 위치한 구역
+    def getReigon(self, position):
+        myReigonStart = np.array([0, 0])
+        myReigonEnd = np.array([0, 0])
+        for i in range(len(self.vertical_lines)-1):
+            if self.vertical_lines[i] <= position[0] and position[0] < self.vertical_lines[i + 1]:
+                myReigonStart[0] = self.vertical_lines[i]
+                myReigonEnd[0] = self.vertical_lines[i+1]
+
+        for i in range(len(self.horizontal_lines)-1):
+            if self.horizontal_lines[i] <= position[1] and position[1] < self.horizontal_lines[i + 1]:
+                myReigonStart[1] = self.horizontal_lines[i]
+                myReigonEnd[1] = self.horizontal_lines[i+1]
+
+        return self.getReigonID(myReigonStart, myReigonEnd)
+    
+    #구역에 따른 대피소 분배
+    def setShelterDist(self):
+        self.shelterTempArr.append([(self.getReigon(i.id), i.id)  for i in (self.shelters)])
+        print(self.shelterTempArr[-1])
+        while len(self.shelterTempArr[-1]) != 0:
+            i = len(self.shelterTempArr)
+            self.shelterTempArr.append([])
+            for j in self.shelterTempArr[i - 1]:
+                self.shelterAssignMap[j[0]] = j[1]
+                for k in self.reigons[j[0]].linkeds:
+                    if not (k in self.shelterAssignMap.keys()):
+                        self.shelterTempArr[i].append((k, j[1]))
+                        self.shelterAssignMap[k] = j[1]
+                    else:
+                        pass
+        
 
     def makeregion(self):
         #장애물으로 인해 만들어진 가로세로 직선들
