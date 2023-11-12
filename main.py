@@ -191,15 +191,15 @@ while 1:
     for i in map.reigons.keys():
             
         d = map.regionDensity(i)
-        if i in map.shelterAssignMap.keys():
-            if map.shelterAssignMap[i] == map.shelters[0].id:
-                dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, "#c69ccc")
-            if map.shelterAssignMap[i] == map.shelters[1].id:
-                dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, "#9cccc6")
-            if map.shelterAssignMap[i] == map.shelters[2].id:
-                dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, "#cc9c9c")
+        #if i in map.shelterAssignMap.keys():
+        #    if map.shelterAssignMap[i] == map.shelters[0].id:
+        #        dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, "#c69ccc")
+        #    if map.shelterAssignMap[i] == map.shelters[1].id:
+        #        dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, "#9cccc6")
+        #    if map.shelterAssignMap[i] == map.shelters[2].id:
+        #        dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, "#cc9c9c")
         
-        #dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, dr._from_rgb(255, 255 - d*20, 255 - d*20))
+        dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, dr._from_rgb(255, 255 - d*20, 255 - d*20))
         
         if ShelterMode != "normal":
             #사망 계산
@@ -217,6 +217,8 @@ while 1:
                 dead = random.randrange(0, len(map.reigonsPopulation[i]))
                 map.reigonsPopulation[i][dead].alive = False
                 deathEntities.append(map.reigonsPopulation[i][dead])
+                print("사망자수 : " + str(len(deathEntities)))
+                print("경과시간 : " + str(timer))
     
                 dangerMap[i] = 0
                 
@@ -262,6 +264,8 @@ while 1:
                 escapedCounts.append(1)
             else:
                 escapedCounts.append(escapedCounts[len(escapedCounts) - 1] + 1)
+                print("대피자수 : " + str(escapedCounts[-1]))
+                print("경과시간 : " + str(timer))
             escapedTimes.append(timer)
             Entities.pop(k)
         k+=1
