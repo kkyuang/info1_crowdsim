@@ -22,6 +22,7 @@ class Entity:
         self.state = 'normal'
         self.mode = 'current'
         self.sheltermode = 'normal'
+        self.alive = True
 
         #'stop mode'에서 현재 움직이고 있는가 하는 상태를 나타냄
         self.isMoving = True
@@ -121,6 +122,12 @@ class Entity:
                         
                     if self.sheltermode == "selffind":
                         self.destination = self.nearestShelter(self.position, map)
+                    elif self.sheltermode == "centralfind":
+                        destShelter = map.shelterAssignMap[map.getReigon(self.position)]
+                        
+                        #랜덤으로 대피소를 분배함
+                        #destShelter = map.shelters[random.randrange(0, len(map.shelters))]
+                        self.destination = np.array([destShelter[0], destShelter[1]])
                 #삭제모드: 도착시 아예 사라짐
                 elif self.mode == 'disappear':
                     self.willbeDisappear = True

@@ -29,6 +29,8 @@ map.makeregion()
 #aStar 탐색을 위한 클래스 객체
 astar = aStar(map)
  
+map.setShelterDist()
+#print(map.shelterAssignMap)
 
 #전체 엔티티 목록
 Entities = []
@@ -126,6 +128,14 @@ def findShelter():
             i.sq = astar.findRoute(i.startedPos, i.destination)
             i.tempDests = astar.routeToRandom(map, i.sq)
             i.nowTempDest = 0
+        elif ShelterMode == "centralfind":
+            destShelter = map.shelterAssignMap[map.getReigon(i.position)]
+            #destShelter = map.shelters[random.randrange(0, len(map.shelters))].id
+            i.destination = np.array([destShelter[0], destShelter[1]])
+            i.startedPos = i.position
+            i.sq = astar.findRoute(i.startedPos, i.destination)
+            i.tempDests = astar.routeToRandom(map, i.sq)
+            i.nowTempDest = 0
     
 
 #재난 발생 토글
@@ -141,7 +151,16 @@ modebtn = dr.makeBtn("흐름 모드", setMode)
 escapedCounts = [] #대피한 사람의 수
 escapedTimes = [] #시간 체크
 
-deathCount = 0 #사망자 수
+#사망자 수
+
+deathCounts = [] #죽은 사람의 수
+deathTimes = [] #시간 체크
+deathEntities = [] #죽은 사람의 명단
+
+#위험도 맵
+dangerMap = {} 
+for i in map.reigons.keys():
+    dangerMap[i] = 0
 
 
 ##타이머
@@ -172,14 +191,39 @@ while 1:
     for i in map.reigons.keys():
             
         d = map.regionDensity(i)
-        #print(d)
-        dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, dr._from_rgb(255, 255 - d*20, 255 - d*20))
+        if i in map.shelterAssignMap.keys():
+            if map.shelterAssignMap[i] == map.shelters[0].id:
+                dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, "#c69ccc")
+            if map.shelterAssignMap[i] == map.shelters[1].id:
+                dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, "#9cccc6")
+            if map.shelterAssignMap[i] == map.shelters[2].id:
+                dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, "#cc9c9c")
         
-            
-        #디버그용
-        #dr.DrawCircle(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])* DPscale, DPscale / 10, 'red')
-        #for j in map.reigons[i].linkeds:
-        #    dr.DrawLine(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])*DPscale, np.array([j[0], j[1]])*DPscale, 'red')
+        #dr.DrawRectangle(map.reigons[i].start * DPscale, map.reigons[i].end * DPscale, dr._from_rgb(255, 255 - d*20, 255 - d*20))
+        
+        if ShelterMode != "normal":
+            #사망 계산
+            if d > 10:
+                dangerMap[i] += d*dt
+            if dangerMap[i] > 100:
+                print("danger!")
+                deathTimes.append(timer)
+                if len(deathCounts) == 0:
+                    deathCounts.append(1)
+                else:
+                    deathCounts.append(deathCounts[-1] + 1)
+    
+                #구역 내에서 랜덤으로 한명이 사망
+                dead = random.randrange(0, len(map.reigonsPopulation[i]))
+                map.reigonsPopulation[i][dead].alive = False
+                deathEntities.append(map.reigonsPopulation[i][dead])
+    
+                dangerMap[i] = 0
+                
+            #디버그용
+            #dr.DrawCircle(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])* DPscale, DPscale / 10, 'red')
+            #for j in map.reigons[i].linkeds:
+            #    dr.DrawLine(np.array([map.reigons[i].id[0], map.reigons[i].id[1]])*DPscale, np.array([j[0], j[1]])*DPscale, 'red')
 
     #대피소 그리기
     for i in range(len(map.shelters)):
@@ -192,7 +236,8 @@ while 1:
         #if map.grid[math.floor(Entities[i].position[0])][math.floor(Entities[i].position[1])] != 1:
         #    map.grid[math.floor(Entities[i].position[0])][math.floor(Entities[i].position[1])] = 0
 
-        Entities[i].move(dt, map, astar)
+        if Entities[i].alive:
+            Entities[i].move(dt, map, astar)
 
         ##맵 새로고침
         #print(Entities[i].position)
@@ -222,7 +267,7 @@ while 1:
         k+=1
 
     #엔티티 모두 대피시
-    if len(Entities) == 0:
+    if len(Entities) - len(deathEntities) == 0:
         #데이터 생성
         df1=pd.DataFrame({'X':escapedTimes,'Y':escapedCounts})
 
@@ -235,6 +280,20 @@ while 1:
         plt.xlabel('time') #x 라벨
         plt.ylabel('evacuee') #y 라벨
         plt.title("evacuee count") #그래프 이름
+        plt.show()
+
+        #데이터 생성
+        df2=pd.DataFrame({'X':deathTimes,'Y':deathTimes})
+
+        #그래프생성
+        plt.plot(df1['X'],df1['Y'],color='blue',linestyle='-',marker='o')
+
+        #그래프 정보 설정
+        plt.xlim(0, deathTimes[-1]) #x축 범위
+        plt.ylim(0, deathCounts[-1]) #y축 범위
+        plt.xlabel('time') #x 라벨
+        plt.ylabel('death') #y 라벨
+        plt.title("death count") #그래프 이름
 
         #그래프 출력
         plt.show()
